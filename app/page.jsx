@@ -1,18 +1,282 @@
 // app/page.jsx
-import EventList from "./components/EventList";
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import EventCard from "./components/EventCard";
+import { fetchEvents } from "./store/slices/eventsSlice";
+import { fetchCategories } from "./store/slices/categoriesSlice";
+import { fetchCurrentUser } from "./store/slices/usersSlice";
+import { ROLES, hasRole } from "./store/roleUtils";
+
+const formatMonth = (dateValue) =>
+  new Date(dateValue).toLocaleDateString("fr-FR", { month: "short" }).toUpperCase();
+
+const formatDay = (dateValue) =>
+  new Date(dateValue).toLocaleDateString("fr-FR", { day: "2-digit" });
+
+const formatTime = (dateValue) =>
+  new Date(dateValue).toLocaleTimeString("fr-FR", { timeStyle: "short" });
 
 export default function HomePage() {
+  const dispatch = useDispatch();
+  const events = useSelector((state) => state.events.list);
+  const categories = useSelector((state) => state.categories.list);
+  const currentUser = useSelector((state) => state.users.current);
+  const [query, setQuery] = useState("");
+  const [location, setLocation] = useState("");
+
+  useEffect(() => {
+    dispatch(fetchEvents());
+    dispatch(fetchCategories());
+    dispatch(fetchCurrentUser());
+  }, [dispatch]);
+
+  const popularEvents = useMemo(() => events.slice(0, 6), [events]);
+  const onlineEvents = useMemo(
+    () => events.filter((event) => event.isOnline || event.isVirtual).slice(0, 6),
+    [events]
+  );
+  const trendingEvents = useMemo(() => events.slice(6, 12), [events]);
+
   return (
     <main className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
-      <section className="flex-1 container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Événements à venir
-        </h1>
-        <EventList />
+      <section className="relative overflow-hidden">
+        <div
+          className="min-h-[420px] bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/image.png')" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/70 via-gray-900/40 to-transparent" />
+          <div className="relative container mx-auto px-4 py-16 text-white">
+            <h1 className="text-4xl md:text-5xl font-bold max-w-2xl">
+              Ne ratez pas vos prochains evenements.
+            </h1>
+            <p className="mt-4 text-base md:text-lg max-w-2xl text-gray-100">
+              Explorez les evenements, lieux et prestataires qui feront vibrer votre
+              communaute.
+            </p>
+            <div className="mt-8 bg-white rounded-2xl shadow border border-gray-100 p-3 flex flex-col md:flex-row gap-3 text-gray-700 max-w-3xl">
+              <div className="flex items-center gap-2 flex-1 px-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 text-gray-400"
+                >
+                  <path d="M10 2a8 8 0 1 0 5.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z" />
+                </svg>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Rechercher un evenement, une categorie, un lieu"
+                  className="w-full py-3 outline-none text-sm text-gray-700"
+                />
+              </div>
+              <div className="flex items-center gap-2 px-3 border-t md:border-t-0 md:border-l border-gray-100">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 text-gray-400"
+                >
+                  <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" />
+                </svg>
+                <input
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Ville"
+                  className="w-full py-3 outline-none text-sm text-gray-700"
+                />
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Link
+                  href="/events"
+                  className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition text-center"
+                >
+                  Explorer
+                </Link>
+                {hasRole(currentUser, ROLES.ORGANIZER) ? (
+                  <Link
+                    href="/events/new"
+                    className="px-6 py-3 rounded-xl bg-gray-900 text-white font-semibold text-sm hover:bg-gray-800 transition text-center"
+                  >
+                    Creer un evenement
+                  </Link>
+                ) : (
+                  <Link
+                    href="/profile"
+                    className="px-6 py-3 rounded-xl bg-yellow-400 text-gray-900 font-semibold text-sm hover:bg-yellow-300 transition text-center"
+                  >
+                    Devenir organisateur
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 py-12 space-y-12">
+        <div>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Explorer les categories</h2>
+            <Link href="/categories" className="text-sm text-indigo-600 hover:underline">
+              Voir tout
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+            {categories.slice(0, 6).map((category) => (
+              <Link
+                key={category._id || category.name}
+                href="/events"
+                className="bg-white rounded-2xl shadow border border-gray-100 p-4 flex flex-col items-center text-center hover:shadow-md transition"
+              >
+                <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-indigo-600 font-semibold">
+                  {(category.name || "CAT").slice(0, 2).toUpperCase()}
+                </div>
+                <p className="mt-3 text-sm text-gray-600">{category.name}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Evenements populaires</h2>
+            <Link href="/events" className="text-sm text-indigo-600 hover:underline">
+              Voir plus
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {popularEvents.map((event) => {
+              const eventDate = event.startDate ? new Date(event.startDate) : null;
+              return (
+                <Link
+                  key={event._id}
+                  href={`/events/${event._id}`}
+                  className="bg-white rounded-2xl shadow border border-gray-100 hover:shadow-md transition overflow-hidden"
+                >
+                  <div className="relative">
+                    <img
+                      src={event.image || "/images/image.png"}
+                      alt={event.title}
+                      className="h-44 w-full object-cover"
+                    />
+                    {event.category && (
+                      <span className="absolute left-3 bottom-3 bg-yellow-400 text-gray-900 text-xs font-semibold px-2 py-1 rounded">
+                        {event.category}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-4 flex gap-4">
+                    <div className="text-center min-w-[44px]">
+                      <p className="text-xs text-indigo-600 font-semibold">
+                        {eventDate ? formatMonth(event.startDate) : "DATE"}
+                      </p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {eventDate ? formatDay(event.startDate) : "--"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-base font-semibold text-gray-900 leading-snug">
+                        {event.title}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        {event?.venue?.city || event?.venue?.name || "Lieu a confirmer"}
+                      </p>
+                      {eventDate && (
+                        <p className="text-xs text-gray-500">
+                          {formatTime(event.startDate)}
+                          {event.endDate ? ` - ${formatTime(event.endDate)}` : ""}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Decouvrir les evenements en ligne
+            </h2>
+            <Link href="/events" className="text-sm text-indigo-600 hover:underline">
+              Voir plus
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {(onlineEvents.length ? onlineEvents : popularEvents).map((event) => (
+              <EventCard key={event._id} event={event} />
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-yellow-400 rounded-2xl p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Des recommandations pour vous
+            </h2>
+            <p className="text-sm text-gray-700 mt-2">
+              Recevez des suggestions adaptees a vos centres d&apos;interet.
+            </p>
+          </div>
+          <Link
+            href="/recommendations"
+            className="px-6 py-3 rounded-full bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+          >
+            Demarrer
+          </Link>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Tendances autour de vous
+            </h2>
+            <Link href="/events" className="text-sm text-indigo-600 hover:underline">
+              Voir plus
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {trendingEvents.map((event) => (
+              <EventCard key={event._id} event={event} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-gray-900">
+        <div className="container mx-auto px-4 py-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-white">
+          <div>
+            <h2 className="text-2xl font-bold">Creer un evenement avec Elyntis</h2>
+            <p className="text-sm text-gray-300 mt-2">
+              Publiez vos evenements, trouvez des lieux et collaborez avec des prestataires.
+            </p>
+          </div>
+          {hasRole(currentUser, ROLES.ORGANIZER) ? (
+            <Link
+              href="/events/new"
+              className="px-6 py-3 rounded-full bg-yellow-400 text-gray-900 font-semibold hover:bg-yellow-300 transition"
+            >
+              Creer un evenement
+            </Link>
+          ) : (
+            <Link
+              href="/profile"
+              className="px-6 py-3 rounded-full bg-yellow-400 text-gray-900 font-semibold hover:bg-yellow-300 transition"
+            >
+              Devenir organisateur
+            </Link>
+          )}
+        </div>
       </section>
 
       <Footer />
