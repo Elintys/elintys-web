@@ -2,16 +2,29 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../apiClient";
 
 export const fetchVenues = createAsyncThunk("venues/fetchVenues", async () => {
-  const res = await apiClient.get("/venues");
+  const res = await apiClient.get("/venues/search");
   return res.data;
 });
+
+export const fetchMyVenues = createAsyncThunk(
+  "venues/fetchMyVenues",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.get("/venues/me");
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
 
 export const fetchVenueById = createAsyncThunk(
   "venues/fetchVenueById",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await apiClient.get(`/venues/${id}`);
-      return res.data;
+      const res = await apiClient.get("/venues/search");
+      const venues = res.data || [];
+      return venues.find((venue) => venue?._id === id || venue?.id === id) || null;
     } catch (error) {
       return rejectWithValue(error?.response?.data || error.message);
     }
@@ -42,6 +55,9 @@ const venuesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchVenues.fulfilled, (state, action) => {
+        state.list = action.payload || [];
+      })
+      .addCase(fetchMyVenues.fulfilled, (state, action) => {
         state.list = action.payload || [];
       })
       .addCase(fetchVenueById.fulfilled, (state, action) => {

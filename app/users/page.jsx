@@ -27,7 +27,7 @@ export default function UsersPage() {
               className="bg-white rounded-xl shadow p-4 border border-gray-100"
             >
               <h2 className="text-lg font-semibold text-gray-800">
-                {user.firstName} {user.lastName}
+                {user.display_name || user.email || "Utilisateur"}
               </h2>
               <p className="text-sm text-gray-600">{user.email}</p>
               <p className="text-xs text-gray-400">

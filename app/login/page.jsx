@@ -42,7 +42,9 @@ export default function LoginForm() {
 
       if (action.type.endsWith("fulfilled")) {
         dispatch(setCredentials({ user: data?.user, token: data?.token }));
-        setMessage(`✅ Bienvenue, ${data?.user?.firstName || data?.user?.email}`);
+        setMessage(
+          `✅ Bienvenue, ${data?.user?.display_name || data?.user?.email}`
+        );
         router.push("/");
       } else {
         setMessage(`❌ Erreur : ${data?.message || "Impossible de se connecter."}`);

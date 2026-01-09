@@ -4,12 +4,7 @@ const normalizeId = (value) => {
   if (!value) return null;
   if (typeof value === "string" || typeof value === "number") return String(value);
   if (typeof value === "object") {
-    return (
-      value._id ||
-      value.id ||
-      value.firebaseUid ||
-      null
-    );
+    return value._id || value.id || value.firebase_uid || value.firebaseUid || null;
   }
   return null;
 };

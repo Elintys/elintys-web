@@ -7,7 +7,6 @@ import Footer from "../components/Footer";
 import { getStoredAuth } from "../components/lib/auth";
 import { createTicket, fetchTickets, useTicket } from "../store/slices/ticketsSlice";
 import { selectAuthUser } from "../store/authSelectors";
-import { getUserId } from "../store/roleUtils";
 import { isTicketVisibleForUser } from "../store/ticketUtils";
 
 const initialForm = {
@@ -49,10 +48,8 @@ export default function TicketsPage() {
 
     setLoading(true);
     try {
-      const creatorId = getUserId(authUser);
       const payload = {
         ...formData,
-        ...(creatorId ? { createdBy: creatorId } : {}),
         qrCode: formData.qrCode || `QR-${Date.now().toString(36)}`,
       };
       await dispatch(createTicket(payload));

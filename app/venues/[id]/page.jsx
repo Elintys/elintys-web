@@ -43,12 +43,17 @@ export default function VenueDetailPage() {
       <Navbar />
       <section className="flex-1 container mx-auto px-4 py-10">
         <div className="bg-white rounded-xl shadow p-6 space-y-4">
-          <h1 className="text-3xl font-bold text-gray-800">{venue.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-800">
+            {venue.title || "Lieu"}
+          </h1>
           <p className="text-gray-600">{venue.description}</p>
           <p className="text-sm text-gray-600">
-            {venue.address} {venue.city ? `- ${venue.city}` : ""}
+            {venue?.location?.address || ""}
+            {venue?.location?.city ? ` - ${venue.location.city}` : ""}
           </p>
-          <p className="text-sm text-gray-600">Capacite: {venue.capacity || "-"}</p>
+          <p className="text-sm text-gray-600">
+            Capacite: {venue?.capacity?.max || venue?.capacity?.min || "-"}
+          </p>
           <div className="text-sm text-gray-600 space-y-1">
             {Object.entries(venue || {}).map(([key, value]) => (
               <div key={key} className="flex gap-2">

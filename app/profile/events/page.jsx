@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEvents } from "../../store/slices/eventsSlice";
+import { fetchEvents, fetchEventsByUser } from "../../store/slices/eventsSlice";
 import { getFavorites } from "../../components/lib/favorites";
 import EventCard from "../../components/EventCard";
 import RoleGuard from "../../components/RoleGuard";
@@ -15,8 +15,15 @@ export default function ProfileEventsPage() {
   const events = useSelector((state) => state.events.list);
 
   useEffect(() => {
+    if (hasRole(currentUser, ROLES.ORGANIZER)) {
+      const userId = getUserId(currentUser);
+      if (userId) {
+        dispatch(fetchEventsByUser(userId));
+        return;
+      }
+    }
     dispatch(fetchEvents());
-  }, [dispatch]);
+  }, [dispatch, currentUser]);
 
   const organizerEvents = useMemo(() => {
     if (!getUserId(currentUser)) return [];

@@ -46,7 +46,11 @@ export default function RegisterForm() {
 
       if (action.type.endsWith("fulfilled")) {
         dispatch(setCredentials({ user: data?.user, token: data?.token }));
-        setMessage(`✅ Compte créé avec succès ! Bienvenue, ${data?.user?.firstName}`);
+        setMessage(
+          `✅ Compte créé avec succès ! Bienvenue, ${
+            data?.user?.display_name || data?.user?.email
+          }`
+        );
         router.push("/");
       } else {
         setMessage(`❌ ${data?.message || "Erreur lors de la création du compte."}`);

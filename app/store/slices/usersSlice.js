@@ -2,8 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../apiClient";
 
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const res = await apiClient.get("/users");
-  return res.data;
+  const res = await apiClient.get("/users/me");
+  if (res.data?.user) {
+    return [res.data.user];
+  }
+  return [];
 });
 
 export const fetchCurrentUser = createAsyncThunk(
@@ -27,15 +30,10 @@ export const fetchCurrentUser = createAsyncThunk(
 export const updateCurrentUser = createAsyncThunk(
   "users/updateCurrentUser",
   async (payload, { rejectWithValue }) => {
-    try {
-      const res = await apiClient.put("/users/me", payload);
-      if (res.data?.user) {
-        return { ...res.data.user, roles: res.data.roles, permissions: res.data.permissions };
-      }
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(error?.response?.data || error.message);
-    }
+    return rejectWithValue({
+      message: "Route /users/me (PUT) non disponible dans l'API actuelle.",
+      payload,
+    });
   }
 );
 

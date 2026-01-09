@@ -1,9 +1,11 @@
 /**
  * @typedef {Object} User
- * @property {string} _id
- * @property {string} [firstName]
- * @property {string} [lastName]
+ * @property {string} id
+ * @property {string} firebase_uid
  * @property {string} [email]
+ * @property {string} [display_name]
+ * @property {string} [bio]
+ * @property {string} [photo_url]
  * @property {string[]} roles
- * @property {string} [avatarUrl]
+ * @property {string} [status]
  */

@@ -32,7 +32,7 @@ export default function HomePage() {
   useEffect(() => {
     dispatch(fetchEvents());
     dispatch(fetchCategories());
-    dispatch(fetchCurrentUser());
+    // dispatch(fetchCurrentUser());
   }, [dispatch]);
 
   const popularEvents = useMemo(() => events.slice(0, 6), [events]);

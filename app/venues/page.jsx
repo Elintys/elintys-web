@@ -7,15 +7,19 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getStoredAuth } from "../components/lib/auth";
 import { createVenue, fetchVenues } from "../store/slices/venuesSlice";
+import RoleGuard from "../components/RoleGuard";
+import { ROLES, hasRole } from "../store/roleUtils";
 
 const initialForm = {
-  name: "",
+  title: "",
+  description: "",
   address: "",
   city: "",
   country: "",
-  capacity: "",
-  type: "",
-  description: "",
+  capacityMin: "",
+  capacityMax: "",
+  pricingAmount: "",
+  pricingCurrency: "CAD",
   imageUrl: "",
 };
 
@@ -29,6 +33,7 @@ const formatValue = (value) => {
 export default function VenuesPage() {
   const dispatch = useDispatch();
   const venues = useSelector((state) => state.venues.list);
+  const currentUser = useSelector((state) => state.users.current);
   const [formData, setFormData] = useState(initialForm);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,11 +63,27 @@ export default function VenuesPage() {
     setLoading(true);
     try {
       const payload = {
-        ...formData,
-        capacity: formData.capacity ? Number(formData.capacity) : undefined,
+        title: formData.title,
+        description: formData.description || undefined,
+        location: {
+          address: formData.address,
+          city: formData.city || undefined,
+          country: formData.country || undefined,
+        },
+        capacity: {
+          min: formData.capacityMin ? Number(formData.capacityMin) : undefined,
+          max: formData.capacityMax ? Number(formData.capacityMax) : undefined,
+        },
+        pricing: {
+          model: "HOURLY",
+          amount: Number(formData.pricingAmount),
+          currency: formData.pricingCurrency || "CAD",
+        },
+        media: {
+          images: formData.imageUrl ? [formData.imageUrl] : [],
+        },
       };
-      const action = await dispatch(createVenue(payload));
-      const created = action.payload;
+      await dispatch(createVenue(payload));
       setFormData(initialForm);
       setMessage("Lieu cree.");
     } catch (error) {
@@ -75,9 +96,12 @@ export default function VenuesPage() {
 
   const filteredVenues = useMemo(() => {
     return venues.filter((venue) => {
-      if (query && !venue.name?.toLowerCase().includes(query.toLowerCase())) return false;
-      if (city && venue.city?.toLowerCase() !== city.toLowerCase()) return false;
-      if (minCapacity && Number(venue.capacity) < Number(minCapacity)) return false;
+      const title = venue.title || "";
+      const venueCity = venue?.location?.city || "";
+      const maxCapacity = venue?.capacity?.max ?? venue?.capacity?.min ?? 0;
+      if (query && !title.toLowerCase().includes(query.toLowerCase())) return false;
+      if (city && venueCity.toLowerCase() !== city.toLowerCase()) return false;
+      if (minCapacity && Number(maxCapacity) < Number(minCapacity)) return false;
       return true;
     });
   }, [venues, query, city, minCapacity]);
@@ -128,9 +152,12 @@ export default function VenuesPage() {
                   href={`/venues/${venue._id}`}
                   className="bg-white rounded-2xl shadow border border-gray-100 hover:shadow-md transition block p-5"
                 >
-                  <h2 className="text-lg font-semibold text-gray-800">{venue.name}</h2>
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {venue.title || "Lieu"}
+                  </h2>
                   <p className="text-sm text-gray-600">
-                    {venue.address} {venue.city ? `- ${venue.city}` : ""}
+                    {venue?.location?.address || ""}
+                    {venue?.location?.city ? ` - ${venue.location.city}` : ""}
                   </p>
                   <div className="mt-3 text-sm text-gray-600 space-y-1">
                     {Object.entries(venue || {}).map(([key, value]) => (
@@ -147,83 +174,115 @@ export default function VenuesPage() {
               )}
             </div>
           </div>
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white rounded-2xl shadow border border-gray-100 p-6 space-y-3 h-fit"
+          <RoleGuard
+            requiredRoles={[ROLES.LANDLORD]}
+            title="Acces restreint"
+            description="Seuls les proprietaires peuvent creer et gerer des lieux."
           >
-            <h2 className="text-lg font-semibold text-gray-900">Nouveau lieu</h2>
-            <input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Nom"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-              required
-            />
-            <input
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Adresse"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-              required
-            />
-            <input
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              placeholder="Ville"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-            />
-            <input
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              placeholder="Pays"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-            />
-            <input
-              name="capacity"
-              value={formData.capacity}
-              onChange={handleChange}
-              placeholder="Capacite"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-              type="number"
-              min="0"
-            />
-            <input
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              placeholder="Type"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-            />
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Description"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-              rows={3}
-            />
-            <input
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              placeholder="Image URL"
-              className="w-full border border-gray-200 rounded-lg px-4 py-2"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
+            <form
+              onSubmit={handleSubmit}
+              className="bg-white rounded-2xl shadow border border-gray-100 p-6 space-y-3 h-fit"
             >
-              {loading ? "Creation..." : "Creer"}
-            </button>
-            {message && (
-              <p className="text-sm text-gray-600">{message}</p>
-            )}
-          </form>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-lg font-semibold text-gray-900">Nouveau lieu</h2>
+                {hasRole(currentUser, ROLES.LANDLORD) && (
+                  <Link href="/profile/venues" className="text-sm text-indigo-600">
+                    Mes espaces
+                  </Link>
+                )}
+              </div>
+              <input
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Nom"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+                required
+              />
+              <input
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Adresse"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+                required
+              />
+              <input
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                placeholder="Ville"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+              />
+              <input
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                placeholder="Pays"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+              />
+              <input
+                name="capacityMin"
+                value={formData.capacityMin}
+                onChange={handleChange}
+                placeholder="Capacite min"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+                type="number"
+                min="0"
+              />
+              <input
+                name="capacityMax"
+                value={formData.capacityMax}
+                onChange={handleChange}
+                placeholder="Capacite max"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+                type="number"
+                min="0"
+              />
+              <input
+                name="pricingAmount"
+                value={formData.pricingAmount}
+                onChange={handleChange}
+                placeholder="Prix (horaire)"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+                type="number"
+                min="0"
+                required
+              />
+              <input
+                name="pricingCurrency"
+                value={formData.pricingCurrency}
+                onChange={handleChange}
+                placeholder="Devise"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+              />
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Description"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+                rows={3}
+              />
+              <input
+                name="imageUrl"
+                value={formData.imageUrl}
+                onChange={handleChange}
+                placeholder="Image URL"
+                className="w-full border border-gray-200 rounded-lg px-4 py-2"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
+              >
+                {loading ? "Creation..." : "Creer"}
+              </button>
+              {message && (
+                <p className="text-sm text-gray-600">{message}</p>
+              )}
+            </form>
+          </RoleGuard>
         </div>
       </section>
       <Footer />

@@ -29,24 +29,20 @@ export const registerProfile = createAsyncThunk(
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (payload, { rejectWithValue }) => {
-    try {
-      const res = await apiClient.put("/users/me", payload);
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(error?.response?.data || error.message);
-    }
+    return rejectWithValue({
+      message: "Route /users/me (PUT) non disponible dans l'API actuelle.",
+      payload,
+    });
   }
 );
 
 export const recoverPassword = createAsyncThunk(
   "auth/recoverPassword",
   async (payload, { rejectWithValue }) => {
-    try {
-      const res = await apiClient.post("/auth/recover", payload);
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(error?.response?.data || error.message);
-    }
+    return rejectWithValue({
+      message: "Route /auth/recover non disponible dans l'API actuelle.",
+      payload,
+    });
   }
 );
 

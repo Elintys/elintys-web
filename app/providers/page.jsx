@@ -28,7 +28,7 @@ export default function ProvidersPage() {
       setLoading(true);
       setError("");
       try {
-        const res = await apiClient.get("/providers");
+        const res = await apiClient.get("/providers/search");
         setProvidersData(res.data || []);
       } catch (err) {
         console.error("Erreur chargement prestataires:", err);
@@ -43,7 +43,12 @@ export default function ProvidersPage() {
 
   const providers = useMemo(() => {
     return providersData.filter((provider) => {
-      if (category && provider.category !== category) return false;
+      if (category) {
+        const hasCategory = (provider?.services || []).some(
+          (service) => service?.category === category
+        );
+        if (!hasCategory) return false;
+      }
       if (query) {
         const name = getProviderName(provider).toLowerCase();
         if (!name.includes(query.toLowerCase())) return false;
@@ -54,7 +59,10 @@ export default function ProvidersPage() {
 
   const suggestions = providers.slice(0, 2);
   const categories = useMemo(() => {
-    const all = providersData.map((provider) => provider.category).filter(Boolean);
+    const all = providersData
+      .flatMap((provider) => provider?.services || [])
+      .map((service) => service?.category)
+      .filter(Boolean);
     return Array.from(new Set(all));
   }, [providersData]);
 

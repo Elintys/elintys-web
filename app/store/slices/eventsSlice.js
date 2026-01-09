@@ -2,9 +2,24 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../apiClient";
 
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
-  const res = await apiClient.get("/events");
-  return res.data;
+  const res = await apiClient.get("/events/public");
+  const items = res.data?.data || res.data || [];
+  return Array.isArray(items)
+    ? items.map((event) => ({ ...event, _id: event._id || event.id }))
+    : items;
 });
+
+export const fetchEventsByUser = createAsyncThunk(
+  "events/fetchEventsByUser",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.get(`/events/user/${userId}`);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
 
 export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
@@ -75,6 +90,9 @@ const eventsSlice = createSlice({
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
+      })
+      .addCase(fetchEventsByUser.fulfilled, (state, action) => {
+        state.list = action.payload || [];
       })
       .addCase(fetchEventById.fulfilled, (state, action) => {
         state.current = action.payload || null;

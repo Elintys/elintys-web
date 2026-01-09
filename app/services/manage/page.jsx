@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import RoleGuard from "../../components/RoleGuard";
+import { ROLES } from "../../store/roleUtils";
 
 const STORAGE_KEY = "elyntisServices";
 
@@ -46,58 +48,64 @@ export default function ServicesManagePage() {
     <main className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <section className="flex-1 container mx-auto px-4 py-10">
-        <div className="grid lg:grid-cols-[2fr,1fr] gap-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Mes services</h1>
-            <div className="space-y-3">
-              {services.map((service) => (
-                <div
-                  key={service.id}
-                  className="bg-white rounded-xl shadow p-4 border border-gray-100"
-                >
-                  <h2 className="text-lg font-semibold text-gray-800">{service.name}</h2>
-                  <p className="text-sm text-gray-600">Prix: {service.price || "-"}</p>
-                  <p className="text-sm text-gray-600">{service.description}</p>
-                </div>
-              ))}
-              {!services.length && (
-                <p className="text-gray-500">Aucun service publie.</p>
-              )}
+        <RoleGuard
+          requiredRoles={[ROLES.PROVIDER]}
+          title="Acces restreint"
+          description="Seuls les prestataires peuvent gerer leurs services."
+        >
+          <div className="grid lg:grid-cols-[2fr,1fr] gap-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-6">Mes services</h1>
+              <div className="space-y-3">
+                {services.map((service) => (
+                  <div
+                    key={service.id}
+                    className="bg-white rounded-xl shadow p-4 border border-gray-100"
+                  >
+                    <h2 className="text-lg font-semibold text-gray-800">{service.name}</h2>
+                    <p className="text-sm text-gray-600">Prix: {service.price || "-"}</p>
+                    <p className="text-sm text-gray-600">{service.description}</p>
+                  </div>
+                ))}
+                {!services.length && (
+                  <p className="text-gray-500">Aucun service publie.</p>
+                )}
+              </div>
             </div>
-          </div>
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white rounded-xl shadow p-6 space-y-3 h-fit"
-          >
-            <h2 className="text-lg font-semibold text-gray-800">Ajouter un service</h2>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nom"
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              required
-            />
-            <input
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="Prix"
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-            />
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description"
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              rows={3}
-            />
-            <button
-              type="submit"
-              className="w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            <form
+              onSubmit={handleSubmit}
+              className="bg-white rounded-xl shadow p-6 space-y-3 h-fit"
             >
-              Enregistrer
-            </button>
-          </form>
-        </div>
+              <h2 className="text-lg font-semibold text-gray-800">Ajouter un service</h2>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Nom"
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                required
+              />
+              <input
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Prix"
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+              />
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description"
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                rows={3}
+              />
+              <button
+                type="submit"
+                className="w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              >
+                Enregistrer
+              </button>
+            </form>
+          </div>
+        </RoleGuard>
       </section>
       <Footer />
     </main>

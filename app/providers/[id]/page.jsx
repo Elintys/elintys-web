@@ -26,8 +26,12 @@ export default function ProviderDetailPage({ params }) {
       setLoading(true);
       setError("");
       try {
-        const res = await apiClient.get(`/providers/${params.id}`);
-        setProvider(res.data || null);
+        const res = await apiClient.get("/providers/search");
+        const providers = res.data || [];
+        const match = providers.find(
+          (item) => item?._id === params.id || item?.id === params.id
+        );
+        setProvider(match || null);
       } catch (err) {
         console.error("Erreur chargement prestataire:", err);
         setError("Impossible de charger le prestataire.");

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-import { fetchVenues } from "../../store/slices/venuesSlice";
+import { fetchMyVenues } from "../../store/slices/venuesSlice";
 import RoleGuard from "../../components/RoleGuard";
 import { ROLES } from "../../store/roleUtils";
 
@@ -12,7 +12,7 @@ export default function ProfileVenuesPage() {
   const venues = useSelector((state) => state.venues.list);
 
   useEffect(() => {
-    dispatch(fetchVenues());
+    dispatch(fetchMyVenues());
   }, [dispatch]);
 
   return (
@@ -34,12 +34,14 @@ export default function ProfileVenuesPage() {
         <div className="grid gap-4">
           {venues.map((venue) => (
             <div
-              key={venue._id || venue.name}
+              key={venue._id || venue.title}
               className="bg-white rounded-2xl shadow border border-gray-100 p-5"
             >
-              <h3 className="text-lg font-semibold text-gray-900">{venue.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {venue.title || "Lieu"}
+              </h3>
               <p className="text-sm text-gray-500">
-                {venue.city || ""} {venue.country || ""}
+                {venue?.location?.city || ""} {venue?.location?.country || ""}
               </p>
               <Link
                 href={`/venues/${venue._id}`}

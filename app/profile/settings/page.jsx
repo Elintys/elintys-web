@@ -6,9 +6,8 @@ import { updateCurrentUser, fetchCurrentUser } from "../../store/slices/usersSli
 import { getStoredAuth } from "../../components/lib/auth";
 
 const initialForm = {
-  firstName: "",
-  lastName: "",
-  avatarUrl: "",
+  display_name: "",
+  photo_url: "",
 };
 
 export default function ProfileSettingsPage() {
@@ -25,9 +24,8 @@ export default function ProfileSettingsPage() {
   useEffect(() => {
     if (!currentUser) return;
     setFormData({
-      firstName: currentUser.firstName || "",
-      lastName: currentUser.lastName || "",
-      avatarUrl: currentUser.avatarUrl || "",
+      display_name: currentUser.display_name || "",
+      photo_url: currentUser.photo_url || "",
     });
   }, [currentUser]);
 
@@ -47,8 +45,15 @@ export default function ProfileSettingsPage() {
 
     setLoading(true);
     try {
-      await dispatch(updateCurrentUser(formData));
-      setMessage("Profil mis a jour.");
+      const action = await dispatch(updateCurrentUser(formData));
+      if (updateCurrentUser.rejected.match(action)) {
+        setMessage(
+          action.payload?.message ||
+            "Mise a jour non disponible avec l'API actuelle."
+        );
+      } else {
+        setMessage("Profil mis a jour.");
+      }
     } catch (error) {
       console.error("Erreur maj profil:", error);
       setMessage("Erreur lors de la mise a jour.");
@@ -66,33 +71,22 @@ export default function ProfileSettingsPage() {
       >
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Prenom
+            Nom d'affichage
           </label>
           <input
-            name="firstName"
-            value={formData.firstName}
+            name="display_name"
+            value={formData.display_name}
             onChange={handleChange}
             className="w-full border border-gray-200 rounded-lg px-4 py-2"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Nom
+            Photo URL
           </label>
           <input
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            className="w-full border border-gray-200 rounded-lg px-4 py-2"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Avatar URL
-          </label>
-          <input
-            name="avatarUrl"
-            value={formData.avatarUrl}
+            name="photo_url"
+            value={formData.photo_url}
             onChange={handleChange}
             className="w-full border border-gray-200 rounded-lg px-4 py-2"
           />

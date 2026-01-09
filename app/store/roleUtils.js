@@ -22,4 +22,5 @@ export const getUserRoles = (user) => {
 
 export const hasRole = (user, role) => getUserRoles(user).includes(role);
 
-export const getUserId = (user) => user?._id || user?.id || user?.firebaseUid || null;
+export const getUserId = (user) =>
+  user?._id || user?.id || user?.firebase_uid || user?.firebaseUid || null;

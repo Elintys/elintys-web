@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { fetchEvents } from "../../store/slices/eventsSlice";
 import { fetchTickets } from "../../store/slices/ticketsSlice";
 import { fetchNotifications } from "../../store/slices/notificationsSlice";
@@ -20,6 +21,7 @@ export default function ProfileOverviewPage() {
   const notifications = useSelector((state) => state.notifications.list);
   const venues = useSelector((state) => state.venues.list);
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const favoritesRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchEvents());
@@ -42,16 +44,25 @@ export default function ProfileOverviewPage() {
   }, [events, currentUser]);
 
   const visibleTickets = useMemo(() => {
-    return tickets.filter((ticket) => isTicketVisibleForUser(ticket, currentUser));
+    return tickets.filter((ticket) =>
+      isTicketVisibleForUser(ticket, currentUser)
+    );
   }, [tickets, currentUser]);
 
   const favoriteEvents = useMemo(() => {
     return events.filter((event) => favoriteIds.includes(event._id));
   }, [events, favoriteIds]);
 
+  const scrollFavoritesBy = (delta) => {
+    if (!favoritesRef.current) return;
+    favoritesRef.current.scrollBy({ left: delta, behavior: "smooth" });
+  };
+
   const upcomingEvents = useMemo(() => {
     return events
-      .filter((event) => event.startDate && new Date(event.startDate) >= new Date())
+      .filter(
+        (event) => event.startDate && new Date(event.startDate) >= new Date()
+      )
       .slice(0, 3);
   }, [events]);
 
@@ -63,7 +74,10 @@ export default function ProfileOverviewPage() {
           <p className="text-2xl font-semibold text-gray-900 mt-2">
             {upcomingEvents.length}
           </p>
-          <Link href="/profile/events" className="text-sm text-indigo-600 hover:underline">
+          <Link
+            href="/profile/events"
+            className="text-sm text-indigo-600 hover:underline"
+          >
             Voir mes evenements
           </Link>
         </div>
@@ -115,7 +129,9 @@ export default function ProfileOverviewPage() {
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Espace organisateur</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Espace organisateur
+              </h3>
               <p className="text-sm text-gray-500 mt-1">
                 Suivez vos evenements et publiez de nouvelles experiences.
               </p>
@@ -139,7 +155,8 @@ export default function ProfileOverviewPage() {
               <p className="text-xl font-semibold text-gray-900 mt-2">
                 {
                   organizerEvents.filter(
-                    (event) => event.startDate && new Date(event.startDate) >= new Date()
+                    (event) =>
+                      event.startDate && new Date(event.startDate) >= new Date()
                   ).length
                 }
               </p>
@@ -173,7 +190,9 @@ export default function ProfileOverviewPage() {
 
       {hasRole(currentUser, ROLES.LANDLORD) && (
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Proprietaire d'espaces</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Proprietaire d'espaces
+          </h3>
           <p className="text-sm text-gray-500 mt-2">
             Vos espaces listes : {venues.length}
           </p>
@@ -188,7 +207,9 @@ export default function ProfileOverviewPage() {
 
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Prochains evenements</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Prochains evenements
+          </h3>
           <div className="mt-4 space-y-3">
             {upcomingEvents.map((event) => (
               <Link
@@ -197,7 +218,9 @@ export default function ProfileOverviewPage() {
                 className="flex items-center justify-between text-sm text-gray-600 hover:text-indigo-600"
               >
                 <span>{event.title}</span>
-                <span>{new Date(event.startDate).toLocaleDateString("fr-FR")}</span>
+                <span>
+                  {new Date(event.startDate).toLocaleDateString("fr-FR")}
+                </span>
               </Link>
             ))}
             {!upcomingEvents.length && (
@@ -206,16 +229,25 @@ export default function ProfileOverviewPage() {
           </div>
         </div>
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Notifications recentes</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Notifications recentes
+          </h3>
           <div className="mt-4 space-y-3">
             {notifications.slice(0, 3).map((notification) => (
-              <div key={notification._id || notification.message} className="text-sm">
+              <div
+                key={notification._id || notification.message}
+                className="text-sm"
+              >
                 <p className="text-gray-700">{notification.message}</p>
-                <p className="text-xs text-gray-400">{notification.type || "Info"}</p>
+                <p className="text-xs text-gray-400">
+                  {notification.type || "Info"}
+                </p>
               </div>
             ))}
             {!notifications.length && (
-              <p className="text-sm text-gray-500">Aucune notification recente.</p>
+              <p className="text-sm text-gray-500">
+                Aucune notification recente.
+              </p>
             )}
           </div>
           <Link
@@ -225,16 +257,48 @@ export default function ProfileOverviewPage() {
             Voir toutes les notifications
           </Link>
         </div>
-        <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
+      </div>
+      <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
+        <div className="flex items-center justify-between gap-3">
           <h3 className="text-lg font-semibold text-gray-900">Favoris</h3>
-          <div className="mt-4 grid gap-4">
-            {favoriteEvents.slice(0, 2).map((event) => (
-              <EventCard key={event._id} event={event} />
+        </div>
+        <div className="relative mt-4">
+          <button
+            type="button"
+            onClick={() => scrollFavoritesBy(-400)}
+            className="absolute left-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 bg-white/90 text-gray-600 shadow-sm hover:bg-white disabled:opacity-40"
+            aria-label="Defiler vers la gauche"
+            disabled={!favoriteEvents.length}
+          >
+            <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
+          </button>
+          <div
+            ref={favoritesRef}
+            className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory"
+          >
+            {favoriteEvents.map((event) => (
+              <div
+                key={event._id}
+                className="min-w-[380px] max-w-[460px] snap-start"
+              >
+                <EventCard event={event} />
+              </div>
             ))}
             {!favoriteEvents.length && (
-              <p className="text-sm text-gray-500">Aucun evenement en favori.</p>
+              <p className="text-sm text-gray-500">
+                Aucun evenement en favori.
+              </p>
             )}
           </div>
+          <button
+            type="button"
+            onClick={() => scrollFavoritesBy(400)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 bg-white/90 text-gray-600 shadow-sm hover:bg-white disabled:opacity-40"
+            aria-label="Defiler vers la droite"
+            disabled={!favoriteEvents.length}
+          >
+            <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
+          </button>
         </div>
       </div>
     </div>
