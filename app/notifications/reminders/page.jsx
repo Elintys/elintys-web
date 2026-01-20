@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { getStoredAuth } from "../../components/lib/auth";
 import { createNotification } from "../../store/slices/notificationsSlice";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function NotificationRemindersPage() {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ export default function NotificationRemindersPage() {
   const [message, setMessage] = useState("");
   const [type, setType] = useState("reminder");
   const [status, setStatus] = useState("");
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +43,7 @@ export default function NotificationRemindersPage() {
     <main className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <section className="flex-1 container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Rappels invites</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">{t("Rappels invites")}</h1>
         <form
           onSubmit={handleSubmit}
           className="bg-white rounded-xl shadow p-6 space-y-4 max-w-lg"
@@ -49,20 +51,20 @@ export default function NotificationRemindersPage() {
           <input
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            placeholder="User ID"
+            placeholder={t("User ID")}
             className="w-full border border-gray-300 rounded-md px-4 py-2"
           />
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Titre"
+            placeholder={t("Titre")}
             className="w-full border border-gray-300 rounded-md px-4 py-2"
             required
           />
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Message"
+            placeholder={t("Message")}
             className="w-full border border-gray-300 rounded-md px-4 py-2"
             rows={4}
             required
@@ -72,17 +74,17 @@ export default function NotificationRemindersPage() {
             onChange={(e) => setType(e.target.value)}
             className="w-full border border-gray-300 rounded-md px-4 py-2"
           >
-            <option value="reminder">Reminder</option>
-            <option value="update">Update</option>
-            <option value="invitation">Invitation</option>
+            <option value="reminder">{t("Reminder")}</option>
+            <option value="update">{t("Update")}</option>
+            <option value="invitation">{t("Invitation")}</option>
           </select>
           <button
             type="submit"
             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
           >
-            Envoyer
+            {t("Envoyer")}
           </button>
-          {status && <p className="text-sm text-gray-600">{status}</p>}
+          {status && <p className="text-sm text-gray-600">{t(status)}</p>}
         </form>
       </section>
       <Footer />

@@ -7,11 +7,13 @@ import RoleGuard from "../../components/RoleGuard";
 import { ROLES } from "../../store/roleUtils";
 import { selectCurrentUser } from "../../store/authSelectors";
 import { isTicketVisibleForUser } from "../../store/ticketUtils";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function ProfileTicketsPage() {
   const dispatch = useDispatch();
   const tickets = useSelector((state) => state.tickets.list);
   const currentUser = useSelector(selectCurrentUser);
+  const { t } = useLanguage();
 
   const visibleTickets = useMemo(() => {
     return tickets.filter((ticket) => isTicketVisibleForUser(ticket, currentUser));
@@ -28,7 +30,7 @@ export default function ProfileTicketsPage() {
       description="Vous devez etre connecte pour acceder a vos billets."
     >
       <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-gray-900">Mes billets</h2>
+        <h2 className="text-xl font-semibold text-gray-900">{t("Mes billets")}</h2>
         <div className="grid gap-4">
           {visibleTickets.map((ticket) => (
             <div
@@ -37,27 +39,27 @@ export default function ProfileTicketsPage() {
             >
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  {ticket.eventTitle || "Billet Elyntis"}
+                  {ticket.eventTitle || t("Billet Elyntis")}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Statut: {ticket.status || "Actif"}
+                  {t("Statut")}: {ticket.status || t("Actif")}
                 </p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-2">
                 <div className="w-20 h-20 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-500">
-                  QR Code
+                  {t("QR Code")}
                 </div>
                 <button
                   type="button"
                   className="text-sm text-indigo-600 hover:underline"
                 >
-                  Telecharger
+                  {t("Telecharger")}
                 </button>
               </div>
             </div>
           ))}
           {!visibleTickets.length && (
-            <p className="text-sm text-gray-500">Aucun billet disponible.</p>
+            <p className="text-sm text-gray-500">{t("Aucun billet disponible.")}</p>
           )}
         </div>
       </div>

@@ -8,18 +8,22 @@ import {
 } from "firebase/auth";
 import { auth } from "../components/lib/firebaseConfig";
 import { loginProfile, setCredentials } from "../store/slices/authSlice";
+import { useLanguage } from "../i18n/LanguageProvider";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function LoginForm() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setMessage("");
+    setMessage(null);
     setLoading(true);
 
     try {
@@ -42,87 +46,153 @@ export default function LoginForm() {
 
       if (action.type.endsWith("fulfilled")) {
         dispatch(setCredentials({ user: data?.user, token: data?.token }));
-        setMessage(
-          `✅ Bienvenue, ${data?.user?.display_name || data?.user?.email}`
-        );
+        setMessage({
+          type: "success",
+          text: t("Bienvenue"),
+          value: data?.user?.display_name || data?.user?.email,
+        });
         router.push("/");
       } else {
-        setMessage(`❌ Erreur : ${data?.message || "Impossible de se connecter."}`);
+        setMessage({
+          type: "error",
+          text: t("Erreur"),
+          value: data?.message || t("Impossible de se connecter."),
+        });
       }
     } catch (error) {
-      setMessage(`⚠️ ${error instanceof Error ? error.message : String(error)}`);
+      setMessage({
+        type: "warning",
+        text: t("Attention"),
+        value: error instanceof Error ? error.message : String(error),
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
-      <div className="bg-white rounded-2xl shadow border border-gray-100 w-full max-w-md p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Connexion Elyntis
-        </h2>
-        <p className="text-sm text-gray-500 mb-6">
-          Accedez a votre espace et retrouvez vos evenements.
-        </p>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Adresse email
-            </label>
-            <input
-              type="email"
-              placeholder="ex: klan@elyntis.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Mot de passe
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 rounded-full text-white font-semibold transition ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700"
-            }`}
-          >
-            {loading ? "Connexion..." : "Se connecter"}
-          </button>
-          <div className="text-center">
-            <a href="/recover" className="text-sm text-indigo-600 hover:underline">
-              Mot de passe oublie ?
-            </a>
-          </div>
-          {message && (
-            <p
-              className={`text-center text-sm ${
-                message.startsWith("✅")
-                  ? "text-green-600"
-                  : message.startsWith("⚠️")
-                  ? "text-yellow-600"
-                  : "text-red-600"
-              }`}
-            >
-              {message}
+    <main className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+      <section className="flex-1 px-4 py-10">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.05fr,1fr] rounded-[36px] overflow-hidden shadow-2xl bg-white">
+          <div className="bg-[#2b283a] text-white p-10 lg:p-14 flex flex-col justify-between">
+            <div className="space-y-6">
+              <p className="text-lg font-semibold text-amber-400">Elintys</p>
+              <h1 className="text-3xl lg:text-4xl font-semibold leading-tight">
+                {t("Decouvrez des evenements sur mesure.")}
+                <br />
+                {t("Connectez-vous pour des recommandations personnalisees.")}
+              </h1>
+            </div>
+            <p className="text-sm text-gray-300">
+              {t("Votre prochaine experience commence ici.")}
             </p>
-          )}
-        </form>
-      </div>
-    </div>
+          </div>
+          <div className="p-10 lg:p-14">
+            <div className="flex items-center justify-between">
+              <h2 className="text-3xl font-semibold text-gray-900">
+                {t("Connexion")}
+              </h2>
+              <button
+                type="button"
+                className="w-10 h-10 rounded-full border border-gray-200 text-gray-400 hover:text-gray-700 transition"
+                aria-label={t("Fermer")}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                className="flex items-center justify-center gap-3 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 hover:border-gray-300 transition"
+              >
+                <span className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-white border border-gray-200 text-sm font-semibold text-gray-700">
+                  G
+                </span>
+                {t("Connexion avec Google")}
+              </button>
+              <button
+                type="button"
+                className="flex items-center justify-center gap-3 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 hover:border-gray-300 transition"
+              >
+                <span className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-blue-600 text-white text-sm font-semibold">
+                  f
+                </span>
+                {t("Connexion avec Facebook")}
+              </button>
+            </div>
+            <div className="my-8 flex items-center gap-3 text-xs text-gray-400">
+              <span className="h-px flex-1 bg-gray-200" />
+              {t("OU")}
+              <span className="h-px flex-1 bg-gray-200" />
+            </div>
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("Adresse email")}
+                </label>
+                <input
+                  type="email"
+                  placeholder={t("Entrez votre email")}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("Mot de passe")}
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    placeholder={t("Entrez votre mot de passe")}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-black placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    required
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                    👁
+                  </span>
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-3 rounded-xl text-white font-semibold transition ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#6d4ae6] hover:bg-[#5f3fd3]"
+                }`}
+              >
+                {loading ? t("Connexion...") : t("Login")}
+              </button>
+              <div className="text-center">
+                <a href="/recover" className="text-sm text-indigo-600 hover:underline">
+                  {t("Mot de passe oublie ?")}
+                </a>
+              </div>
+              {message && (
+                <p
+                  className={`text-center text-sm ${
+                    message.type === "success"
+                      ? "text-green-600"
+                      : message.type === "warning"
+                      ? "text-yellow-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {message.text}
+                  {message.value ? `: ${message.value}` : ""}
+                </p>
+              )}
+            </form>
+          </div>
+        </div>
+      </section>
+      <Footer />
+    </main>
   );
 }

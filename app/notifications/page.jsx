@@ -9,11 +9,13 @@ import {
   fetchNotifications,
   markNotificationRead,
 } from "../store/slices/notificationsSlice";
+import { useLanguage } from "../i18n/LanguageProvider";
 
 export default function NotificationsPage() {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notifications.list);
   const [message, setMessage] = useState("");
+  const { t } = useLanguage();
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -38,7 +40,7 @@ export default function NotificationsPage() {
     <main className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <section className="flex-1 container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Notifications</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">{t("Notifications")}</h1>
         <div className="space-y-3">
           {notifications.map((note) => (
             <div
@@ -55,16 +57,16 @@ export default function NotificationsPage() {
                   onClick={() => handleRead(note._id)}
                   className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                 >
-                  Marquer lu
+                  {t("Marquer lu")}
                 </button>
               </div>
             </div>
           ))}
           {!notifications.length && (
-            <p className="text-gray-500">Aucune notification.</p>
+            <p className="text-gray-500">{t("Aucune notification.")}</p>
           )}
         </div>
-        {message && <p className="text-sm text-gray-600 mt-4">{message}</p>}
+        {message && <p className="text-sm text-gray-600 mt-4">{t(message)}</p>}
       </section>
       <Footer />
     </main>

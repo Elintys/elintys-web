@@ -9,6 +9,7 @@ import { getStoredAuth } from "../components/lib/auth";
 import { createVenue, fetchVenues } from "../store/slices/venuesSlice";
 import RoleGuard from "../components/RoleGuard";
 import { ROLES, hasRole } from "../store/roleUtils";
+import { useLanguage } from "../i18n/LanguageProvider";
 
 const initialForm = {
   title: "",
@@ -40,6 +41,7 @@ export default function VenuesPage() {
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("");
   const [minCapacity, setMinCapacity] = useState("");
+  const { t } = useLanguage();
 
   useEffect(() => {
     dispatch(fetchVenues());
@@ -113,10 +115,10 @@ export default function VenuesPage() {
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6 mb-6">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div>
-              <p className="text-sm text-gray-500 mb-2">Catalogue</p>
-              <h1 className="text-3xl font-bold text-gray-900">Lieux</h1>
+              <p className="text-sm text-gray-500 mb-2">{t("Catalogue")}</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t("Lieux")}</h1>
               <p className="text-sm text-gray-500 mt-2">
-                Explorez les lieux disponibles pour vos prochains evenements.
+                {t("Explorez les lieux disponibles pour vos prochains evenements.")}
               </p>
             </div>
           </div>
@@ -127,13 +129,13 @@ export default function VenuesPage() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Recherche"
+                placeholder={t("Recherche")}
                 className="border border-gray-200 rounded-lg px-3 py-2"
               />
               <input
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                placeholder="Ville"
+                placeholder={t("Ville")}
                 className="border border-gray-200 rounded-lg px-3 py-2"
               />
               <input
@@ -141,7 +143,7 @@ export default function VenuesPage() {
                 min="0"
                 value={minCapacity}
                 onChange={(e) => setMinCapacity(e.target.value)}
-                placeholder="Capacite min"
+                placeholder={t("Capacite min")}
                 className="border border-gray-200 rounded-lg px-3 py-2"
               />
             </div>
@@ -153,7 +155,7 @@ export default function VenuesPage() {
                   className="bg-white rounded-2xl shadow border border-gray-100 hover:shadow-md transition block p-5"
                 >
                   <h2 className="text-lg font-semibold text-gray-800">
-                    {venue.title || "Lieu"}
+                    {venue.title || t("Lieu")}
                   </h2>
                   <p className="text-sm text-gray-600">
                     {venue?.location?.address || ""}
@@ -170,7 +172,7 @@ export default function VenuesPage() {
                 </Link>
               ))}
               {!filteredVenues.length && (
-                <p className="text-gray-500">Aucun lieu disponible.</p>
+                <p className="text-gray-500">{t("Aucun lieu disponible.")}</p>
               )}
             </div>
           </div>
@@ -184,10 +186,10 @@ export default function VenuesPage() {
               className="bg-white rounded-2xl shadow border border-gray-100 p-6 space-y-3 h-fit"
             >
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-lg font-semibold text-gray-900">Nouveau lieu</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t("Nouveau lieu")}</h2>
                 {hasRole(currentUser, ROLES.LANDLORD) && (
                   <Link href="/profile/venues" className="text-sm text-indigo-600">
-                    Mes espaces
+                    {t("Mes espaces")}
                   </Link>
                 )}
               </div>
@@ -195,7 +197,7 @@ export default function VenuesPage() {
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                placeholder="Nom"
+                placeholder={t("Nom")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
                 required
               />
@@ -203,7 +205,7 @@ export default function VenuesPage() {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                placeholder="Adresse"
+                placeholder={t("Adresse")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
                 required
               />
@@ -211,21 +213,21 @@ export default function VenuesPage() {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                placeholder="Ville"
+                placeholder={t("Ville")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
               />
               <input
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                placeholder="Pays"
+                placeholder={t("Pays")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
               />
               <input
                 name="capacityMin"
                 value={formData.capacityMin}
                 onChange={handleChange}
-                placeholder="Capacite min"
+                placeholder={t("Capacite min")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
                 type="number"
                 min="0"
@@ -234,7 +236,7 @@ export default function VenuesPage() {
                 name="capacityMax"
                 value={formData.capacityMax}
                 onChange={handleChange}
-                placeholder="Capacite max"
+                placeholder={t("Capacite max")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
                 type="number"
                 min="0"
@@ -243,7 +245,7 @@ export default function VenuesPage() {
                 name="pricingAmount"
                 value={formData.pricingAmount}
                 onChange={handleChange}
-                placeholder="Prix (horaire)"
+                placeholder={t("Prix (horaire)")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
                 type="number"
                 min="0"
@@ -253,14 +255,14 @@ export default function VenuesPage() {
                 name="pricingCurrency"
                 value={formData.pricingCurrency}
                 onChange={handleChange}
-                placeholder="Devise"
+                placeholder={t("Devise")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
               />
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Description"
+                placeholder={t("Description")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
                 rows={3}
               />
@@ -268,7 +270,7 @@ export default function VenuesPage() {
                 name="imageUrl"
                 value={formData.imageUrl}
                 onChange={handleChange}
-                placeholder="Image URL"
+                placeholder={t("Image URL")}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2"
               />
               <button
@@ -276,10 +278,10 @@ export default function VenuesPage() {
                 disabled={loading}
                 className="w-full py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
               >
-                {loading ? "Creation..." : "Creer"}
+                {loading ? t("Creation...") : t("Creer")}
               </button>
               {message && (
-                <p className="text-sm text-gray-600">{message}</p>
+                <p className="text-sm text-gray-600">{t(message)}</p>
               )}
             </form>
           </RoleGuard>

@@ -7,6 +7,8 @@ import ticketsReducer from "./slices/ticketsSlice";
 import invitationsReducer from "./slices/invitationsSlice";
 import notificationsReducer from "./slices/notificationsSlice";
 import usersReducer from "./slices/usersSlice";
+import providersReducer from "./slices/providersSlice";
+import eventDraftReducer from "./slices/eventSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +20,7 @@ export const store = configureStore({
     invitations: invitationsReducer,
     notifications: notificationsReducer,
     users: usersReducer,
+    providers: providersReducer,
+    eventDraft: eventDraftReducer,
   },
 });

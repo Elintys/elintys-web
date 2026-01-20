@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { isFavorite, toggleFavorite } from "../../components/lib/favorites";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function FavoriteButton({ eventId }) {
   const [favorite, setFavorite] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     setFavorite(isFavorite(eventId));
@@ -25,7 +27,7 @@ export default function FavoriteButton({ eventId }) {
           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
       }`}
     >
-      {favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+      {favorite ? t("Retirer des favoris") : t("Ajouter aux favoris")}
     </button>
   );
 }

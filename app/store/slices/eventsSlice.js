@@ -45,6 +45,54 @@ export const createEvent = createAsyncThunk(
   }
 );
 
+export const createEventDraft = createAsyncThunk(
+  "events/createEventDraft",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.post("/events", payload);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
+export const patchEvent = createAsyncThunk(
+  "events/patchEvent",
+  async ({ id, payload }, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.patch(`/events/${id}`, payload);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
+export const addManualProvider = createAsyncThunk(
+  "events/addManualProvider",
+  async ({ id, payload }, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.post(`/events/${id}/manual-providers`, payload);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
+export const removeManualProvider = createAsyncThunk(
+  "events/removeManualProvider",
+  async ({ id, providerId }, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.delete(`/events/${id}/manual-providers/${providerId}`);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
 export const updateEvent = createAsyncThunk(
   "events/updateEvent",
   async ({ id, payload }, { rejectWithValue }) => {
@@ -99,6 +147,21 @@ const eventsSlice = createSlice({
       })
       .addCase(createEvent.fulfilled, (state, action) => {
         state.list = [action.payload, ...state.list];
+      })
+      .addCase(createEventDraft.fulfilled, (state, action) => {
+        state.current = action.payload || null;
+      })
+      .addCase(patchEvent.fulfilled, (state, action) => {
+        state.current = action.payload || state.current;
+        state.list = state.list.map((event) =>
+          event._id === action.payload?._id ? action.payload : event
+        );
+      })
+      .addCase(addManualProvider.fulfilled, (state, action) => {
+        state.current = action.payload || state.current;
+      })
+      .addCase(removeManualProvider.fulfilled, (state, action) => {
+        state.current = action.payload || state.current;
       })
       .addCase(updateEvent.fulfilled, (state, action) => {
         state.current = action.payload || null;

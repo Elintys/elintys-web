@@ -1,0 +1,74 @@
+:root {
+  --color-background: #f7f6f2;
+  --color-surface: #ffffff;
+  --color-foreground: #b00505;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-primary: #0f766e;
+  --color-primary-strong: #115e59;
+  --color-accent: #f4b860;
+  --color-accent-strong: #e09f3e;
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --shadow-soft: 0 20px 50px -30px rgba(15, 23, 42, 0.4);
+  --radius-lg: 20px;
+  --font-sans: "Poppins", "Montserrat", "Segoe UI", sans-serif;
+  --font-heading: "Playfair Display", "Times New Roman", serif;
+  --font-mono: "Fira Code", "SFMono-Regular", monospace;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #1569bd;
+    --color-surface: #0654b9;
+    --color-foreground: #e5e7eb;
+    --color-muted: #9ca3af;
+    --color-border: #1f2937;
+    --color-primary: #14b8a6;
+    --color-primary-strong: #0f766e;
+    --color-accent: #f59e0b;
+    --color-accent-strong: #d97706;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--color-foreground);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+main {
+  background: var(--color-background);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #1b1b1b;
+}

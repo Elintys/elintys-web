@@ -1,8 +1,9 @@
 import axios from "axios";
 import { showToast } from "../components/Toast";
 
-const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api")
+const rawBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api")
   .replace(/\/$/, ""); // Remove trailing slash if present
+const baseUrl = rawBaseUrl.endsWith("/api") ? rawBaseUrl : `${rawBaseUrl}/api`;
 
 const apiClient = axios.create({
   baseURL: baseUrl,

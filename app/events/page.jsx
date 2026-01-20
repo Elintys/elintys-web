@@ -11,6 +11,7 @@ import { fetchEvents } from "../store/slices/eventsSlice";
 import { fetchCategories } from "../store/slices/categoriesSlice";
 import { fetchCurrentUser } from "../store/slices/usersSlice";
 import { ROLES, hasRole } from "../store/roleUtils";
+import { useLanguage } from "../i18n/LanguageProvider";
 
 export default function EventsPage() {
   const dispatch = useDispatch();
@@ -23,11 +24,13 @@ export default function EventsPage() {
   const [endDate, setEndDate] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  const { language, t } = useLanguage();
+  const locale = language === "en" ? "en-US" : "fr-FR";
 
   useEffect(() => {
     dispatch(fetchEvents());
     dispatch(fetchCategories());
-    dispatch(fetchCurrentUser());
+    // dispatch(fetchCurrentUser());
     setFavorites(getFavorites());
   }, []);
 
@@ -49,13 +52,13 @@ export default function EventsPage() {
   };
 
   const formatMonth = (dateValue) =>
-    new Date(dateValue).toLocaleDateString("fr-FR", { month: "short" }).toUpperCase();
+    new Date(dateValue).toLocaleDateString(locale, { month: "short" }).toUpperCase();
 
   const formatDay = (dateValue) =>
-    new Date(dateValue).toLocaleDateString("fr-FR", { day: "2-digit" });
+    new Date(dateValue).toLocaleDateString(locale, { day: "2-digit" });
 
   const formatTime = (dateValue) =>
-    new Date(dateValue).toLocaleTimeString("fr-FR", { timeStyle: "short" });
+    new Date(dateValue).toLocaleTimeString(locale, { timeStyle: "short" });
 
   return (
     <main className="min-h-screen flex flex-col bg-gray-50">
@@ -75,15 +78,17 @@ export default function EventsPage() {
             >
               <path d="M15 18l-6-6 6-6" />
             </svg>
-            Retour
+            {t("Retour")}
           </Link>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Evenements interessants</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {t("Evenements interessants")}
+            </h1>
             <p className="text-sm text-gray-500 mt-2">
-              Rechercher, filtrer et sauvegarder vos evenements preferes.
+              {t("Rechercher, filtrer et sauvegarder vos evenements preferes.")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -91,27 +96,27 @@ export default function EventsPage() {
               href="/favorites"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition"
             >
-              Favoris
+              {t("Favoris")}
             </Link>
             <Link
               href="/recommendations"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition"
             >
-              Recommandations
+              {t("Recommandations")}
             </Link>
             {hasRole(currentUser, ROLES.ORGANIZER) ? (
               <Link
                 href="/events/new"
                 className="px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
               >
-                Creer un evenement
+                {t("Creer un evenement")}
               </Link>
             ) : (
               <Link
                 href="/profile"
                 className="px-4 py-2 bg-yellow-400 text-gray-900 rounded-full hover:bg-yellow-300 transition"
               >
-                Devenir organisateur
+                {t("Devenir organisateur")}
               </Link>
             )}
           </div>
@@ -121,7 +126,7 @@ export default function EventsPage() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Recherche par titre"
+            placeholder={t("Recherche par titre")}
             className="border border-gray-200 rounded-lg px-3 py-2"
           />
           <select
@@ -129,7 +134,7 @@ export default function EventsPage() {
             onChange={(e) => setCategoryId(e.target.value)}
             className="border border-gray-200 rounded-lg px-3 py-2"
           >
-            <option value="">Categorie</option>
+            <option value="">{t("Categorie")}</option>
             {categories.map((cat) => (
               <option key={cat._id || cat.name} value={cat._id}>
                 {cat.name}
@@ -155,14 +160,14 @@ export default function EventsPage() {
                 checked={showFavorites}
                 onChange={(e) => setShowFavorites(e.target.checked)}
               />
-              Favoris
+              {t("Favoris")}
             </label>
             <button
               type="button"
               onClick={handleSavePreferences}
               className="text-sm text-indigo-600 hover:underline"
             >
-              Sauver mes preferences
+              {t("Sauver mes preferences")}
             </button>
           </div>
         </div>
@@ -170,15 +175,24 @@ export default function EventsPage() {
         <div className="grid md:grid-cols-3 gap-8">
           {filteredEvents.map((event) => {
             const eventDate = event.startDate ? new Date(event.startDate) : null;
-            const month = eventDate ? formatMonth(event.startDate) : "DATE";
+            const month = eventDate ? formatMonth(event.startDate) : t("DATE");
             const day = eventDate ? formatDay(event.startDate) : "--";
+            const coverImage =
+              event.coverImageUrl || event.imageUrl || event.image || "/images/image.png";
+            const categoryLabel =
+              event.category?.name || event.categoryName || event.category || event.categoryId;
             const location =
-              event?.venue?.city || event?.venue?.name || event?.location || "Lieu a confirmer";
+              event?.manualVenue?.city ||
+              event?.manualVenue?.name ||
+              event?.venue?.city ||
+              event?.venue?.name ||
+              event?.location ||
+              t("Lieu a confirmer");
             const priceLabel = event.price
               ? `${event.price} ${event.currency || "CAD"}`
               : event.isFree
-                ? "Gratuit"
-                : "Prix sur place";
+                ? t("Gratuit")
+                : t("Prix sur place");
             const interested = event.interestedCount || 0;
 
             return (
@@ -189,18 +203,18 @@ export default function EventsPage() {
               >
                 <div className="relative">
                   <img
-                    src={event.image || "/images/image.png"}
+                    src={coverImage}
                     alt={event.title}
                     className="h-44 w-full object-cover"
                   />
-                  {event.category && (
+                  {categoryLabel && (
                     <span className="absolute left-3 bottom-3 bg-yellow-400 text-gray-900 text-xs font-semibold px-2 py-1 rounded">
-                      {event.category}
+                      {categoryLabel}
                     </span>
                   )}
                   <button
                     type="button"
-                    aria-label="Ajouter aux favoris"
+                    aria-label={t("Ajouter aux favoris")}
                     className="absolute right-3 top-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-gray-700 hover:text-indigo-600"
                   >
                     <svg
@@ -250,7 +264,7 @@ export default function EventsPage() {
                         >
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z" />
                         </svg>
-                        {interested} interesses
+                        {interested} {t("interesses")}
                       </span>
                     </div>
                   </div>
@@ -259,7 +273,7 @@ export default function EventsPage() {
             );
           })}
           {!filteredEvents.length && (
-            <p className="text-gray-500">Aucun evenement trouve.</p>
+            <p className="text-gray-500">{t("Aucun evenement trouve.")}</p>
           )}
         </div>
       </section>

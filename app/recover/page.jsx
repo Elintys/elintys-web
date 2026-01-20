@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { recoverPassword } from "../store/slices/authSlice";
+import { useLanguage } from "../i18n/LanguageProvider";
 
 export default function RecoverPage() {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export default function RecoverPage() {
   const [message, setMessage] = useState("");
   const [resetLink, setResetLink] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,10 +43,10 @@ export default function RecoverPage() {
       <Navbar />
       <section className="flex-1 container mx-auto px-4 py-10">
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6 mb-6">
-          <p className="text-sm text-gray-500 mb-2">Compte</p>
-          <h1 className="text-3xl font-bold text-gray-900">Mot de passe oublie</h1>
+          <p className="text-sm text-gray-500 mb-2">{t("Compte")}</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t("Mot de passe oublie")}</h1>
           <p className="text-sm text-gray-500 mt-2">
-            Recevez un lien pour reinitialiser votre mot de passe.
+            {t("Recevez un lien pour reinitialiser votre mot de passe.")}
           </p>
         </div>
         <form
@@ -55,7 +57,7 @@ export default function RecoverPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder={t("Email")}
             className="w-full border border-gray-200 rounded-lg px-4 py-2"
             required
           />
@@ -64,9 +66,9 @@ export default function RecoverPage() {
             disabled={loading}
             className="px-5 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
           >
-            {loading ? "Envoi..." : "Envoyer"}
+            {loading ? t("Envoi...") : t("Envoyer")}
           </button>
-          {message && <p className="text-sm text-gray-600">{message}</p>}
+          {message && <p className="text-sm text-gray-600">{t(message)}</p>}
           {resetLink && (
             <a
               href={resetLink}
@@ -74,7 +76,7 @@ export default function RecoverPage() {
               target="_blank"
               rel="noreferrer"
             >
-              Ouvrir le lien de reinitialisation
+              {t("Ouvrir le lien de reinitialisation")}
             </a>
           )}
         </form>

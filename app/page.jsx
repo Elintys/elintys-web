@@ -11,15 +11,16 @@ import { fetchEvents } from "./store/slices/eventsSlice";
 import { fetchCategories } from "./store/slices/categoriesSlice";
 import { fetchCurrentUser } from "./store/slices/usersSlice";
 import { ROLES, hasRole } from "./store/roleUtils";
+import { useLanguage } from "./i18n/LanguageProvider";
 
-const formatMonth = (dateValue) =>
-  new Date(dateValue).toLocaleDateString("fr-FR", { month: "short" }).toUpperCase();
+const formatMonth = (dateValue, locale) =>
+  new Date(dateValue).toLocaleDateString(locale, { month: "short" }).toUpperCase();
 
-const formatDay = (dateValue) =>
-  new Date(dateValue).toLocaleDateString("fr-FR", { day: "2-digit" });
+const formatDay = (dateValue, locale) =>
+  new Date(dateValue).toLocaleDateString(locale, { day: "2-digit" });
 
-const formatTime = (dateValue) =>
-  new Date(dateValue).toLocaleTimeString("fr-FR", { timeStyle: "short" });
+const formatTime = (dateValue, locale) =>
+  new Date(dateValue).toLocaleTimeString(locale, { timeStyle: "short" });
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -28,6 +29,8 @@ export default function HomePage() {
   const currentUser = useSelector((state) => state.users.current);
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
+  const { language, t } = useLanguage();
+  const locale = language === "en" ? "en-US" : "fr-FR";
 
   useEffect(() => {
     dispatch(fetchEvents());
@@ -54,11 +57,12 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-gray-900/70 via-gray-900/40 to-transparent" />
           <div className="relative container mx-auto px-4 py-16 text-white">
             <h1 className="text-4xl md:text-5xl font-bold max-w-2xl">
-              Ne ratez pas vos prochains evenements.
+              {t("Ne ratez pas vos prochains evenements.")}
             </h1>
             <p className="mt-4 text-base md:text-lg max-w-2xl text-gray-100">
-              Explorez les evenements, lieux et prestataires qui feront vibrer votre
-              communaute.
+              {t(
+                "Explorez les evenements, lieux et prestataires qui feront vibrer votre communaute."
+              )}
             </p>
             <div className="mt-8 bg-white rounded-2xl shadow border border-gray-100 p-3 flex flex-col md:flex-row gap-3 text-gray-700 max-w-3xl">
               <div className="flex items-center gap-2 flex-1 px-3">
@@ -73,7 +77,7 @@ export default function HomePage() {
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Rechercher un evenement, une categorie, un lieu"
+                  placeholder={t("Rechercher un evenement, une categorie, un lieu")}
                   className="w-full py-3 outline-none text-sm text-gray-700"
                 />
               </div>
@@ -89,7 +93,7 @@ export default function HomePage() {
                 <input
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Ville"
+                  placeholder={t("Ville")}
                   className="w-full py-3 outline-none text-sm text-gray-700"
                 />
               </div>
@@ -98,21 +102,21 @@ export default function HomePage() {
                   href="/events"
                   className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition text-center"
                 >
-                  Explorer
+                  {t("Explorer")}
                 </Link>
                 {hasRole(currentUser, ROLES.ORGANIZER) ? (
                   <Link
                     href="/events/new"
                     className="px-6 py-3 rounded-xl bg-gray-900 text-white font-semibold text-sm hover:bg-gray-800 transition text-center"
                   >
-                    Creer un evenement
+                    {t("Creer un evenement")}
                   </Link>
                 ) : (
                   <Link
                     href="/profile"
                     className="px-6 py-3 rounded-xl bg-yellow-400 text-gray-900 font-semibold text-sm hover:bg-yellow-300 transition text-center"
                   >
-                    Devenir organisateur
+                    {t("Devenir organisateur")}
                   </Link>
                 )}
               </div>
@@ -124,9 +128,11 @@ export default function HomePage() {
       <section className="container mx-auto px-4 py-12 space-y-12">
         <div>
           <div className="flex items-center justify-between gap-4 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Explorer les categories</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {t("Explorer les categories")}
+            </h2>
             <Link href="/categories" className="text-sm text-indigo-600 hover:underline">
-              Voir tout
+              {t("Voir tout")}
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
@@ -147,14 +153,25 @@ export default function HomePage() {
 
         <div>
           <div className="flex items-center justify-between gap-4 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Evenements populaires</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{t("Evenements populaires")}</h2>
             <Link href="/events" className="text-sm text-indigo-600 hover:underline">
-              Voir plus
+              {t("Voir plus")}
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {popularEvents.map((event) => {
               const eventDate = event.startDate ? new Date(event.startDate) : null;
+              const coverImage =
+                event.coverImageUrl || event.imageUrl || event.image || "/images/image.png";
+              const categoryLabel =
+                event.category?.name || event.categoryName || event.category || event.categoryId;
+              const locationLabel =
+                event?.manualVenue?.city ||
+                event?.manualVenue?.name ||
+                event?.venue?.city ||
+                event?.venue?.name ||
+                event?.location ||
+                t("Lieu a confirmer");
               return (
                 <Link
                   key={event._id}
@@ -163,23 +180,23 @@ export default function HomePage() {
                 >
                   <div className="relative">
                     <img
-                      src={event.image || "/images/image.png"}
+                      src={coverImage}
                       alt={event.title}
                       className="h-44 w-full object-cover"
                     />
-                    {event.category && (
+                    {categoryLabel && (
                       <span className="absolute left-3 bottom-3 bg-yellow-400 text-gray-900 text-xs font-semibold px-2 py-1 rounded">
-                        {event.category}
+                        {categoryLabel}
                       </span>
                     )}
                   </div>
                   <div className="p-4 flex gap-4">
                     <div className="text-center min-w-[44px]">
                       <p className="text-xs text-indigo-600 font-semibold">
-                        {eventDate ? formatMonth(event.startDate) : "DATE"}
+                        {eventDate ? formatMonth(event.startDate, locale) : t("DATE")}
                       </p>
                       <p className="text-lg font-bold text-gray-900">
-                        {eventDate ? formatDay(event.startDate) : "--"}
+                        {eventDate ? formatDay(event.startDate, locale) : "--"}
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -187,12 +204,12 @@ export default function HomePage() {
                         {event.title}
                       </h3>
                       <p className="text-xs text-gray-500">
-                        {event?.venue?.city || event?.venue?.name || "Lieu a confirmer"}
+                        {locationLabel}
                       </p>
                       {eventDate && (
                         <p className="text-xs text-gray-500">
-                          {formatTime(event.startDate)}
-                          {event.endDate ? ` - ${formatTime(event.endDate)}` : ""}
+                          {formatTime(event.startDate, locale)}
+                          {event.endDate ? ` - ${formatTime(event.endDate, locale)}` : ""}
                         </p>
                       )}
                     </div>
@@ -206,10 +223,10 @@ export default function HomePage() {
         <div>
           <div className="flex items-center justify-between gap-4 mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              Decouvrir les evenements en ligne
+              {t("Decouvrir les evenements en ligne")}
             </h2>
             <Link href="/events" className="text-sm text-indigo-600 hover:underline">
-              Voir plus
+              {t("Voir plus")}
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -222,27 +239,27 @@ export default function HomePage() {
         <div className="bg-yellow-400 rounded-2xl p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
-              Des recommandations pour vous
+              {t("Des recommandations pour vous")}
             </h2>
             <p className="text-sm text-gray-700 mt-2">
-              Recevez des suggestions adaptees a vos centres d&apos;interet.
+              {t("Recevez des suggestions adaptees a vos centres d'interet.")}
             </p>
           </div>
           <Link
             href="/recommendations"
             className="px-6 py-3 rounded-full bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
           >
-            Demarrer
+            {t("Demarrer")}
           </Link>
         </div>
 
         <div>
           <div className="flex items-center justify-between gap-4 mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              Tendances autour de vous
+              {t("Tendances autour de vous")}
             </h2>
             <Link href="/events" className="text-sm text-indigo-600 hover:underline">
-              Voir plus
+              {t("Voir plus")}
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -256,9 +273,9 @@ export default function HomePage() {
       <section className="bg-gray-900">
         <div className="container mx-auto px-4 py-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-white">
           <div>
-            <h2 className="text-2xl font-bold">Creer un evenement avec Elyntis</h2>
+            <h2 className="text-2xl font-bold">{t("Creer un evenement avec Elyntis")}</h2>
             <p className="text-sm text-gray-300 mt-2">
-              Publiez vos evenements, trouvez des lieux et collaborez avec des prestataires.
+              {t("Publiez vos evenements, trouvez des lieux et collaborez avec des prestataires.")}
             </p>
           </div>
           {hasRole(currentUser, ROLES.ORGANIZER) ? (
@@ -266,14 +283,14 @@ export default function HomePage() {
               href="/events/new"
               className="px-6 py-3 rounded-full bg-yellow-400 text-gray-900 font-semibold hover:bg-yellow-300 transition"
             >
-              Creer un evenement
+              {t("Creer un evenement")}
             </Link>
           ) : (
             <Link
               href="/profile"
               className="px-6 py-3 rounded-full bg-yellow-400 text-gray-900 font-semibold hover:bg-yellow-300 transition"
             >
-              Devenir organisateur
+              {t("Devenir organisateur")}
             </Link>
           )}
         </div>

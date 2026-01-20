@@ -8,11 +8,13 @@ import { getFavorites } from "../../components/lib/favorites";
 import EventCard from "../../components/EventCard";
 import RoleGuard from "../../components/RoleGuard";
 import { ROLES, hasRole, getUserId } from "../../store/roleUtils";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function ProfileEventsPage() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.users.current);
   const events = useSelector((state) => state.events.list);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (hasRole(currentUser, ROLES.ORGANIZER)) {
@@ -47,13 +49,13 @@ export default function ProfileEventsPage() {
     >
       <div className="space-y-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <h2 className="text-xl font-semibold text-gray-900">Mes evenements</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t("Mes evenements")}</h2>
           {hasRole(currentUser, ROLES.ORGANIZER) && (
             <Link
               href="/events/new"
               className="px-5 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition"
             >
-              Creer un evenement
+              {t("Creer un evenement")}
             </Link>
           )}
         </div>
@@ -61,7 +63,7 @@ export default function ProfileEventsPage() {
         {hasRole(currentUser, ROLES.ORGANIZER) ? (
           <div className="space-y-4">
             <h3 className="text-sm uppercase text-gray-400 tracking-wide">
-              Evenements crees
+              {t("Evenements crees")}
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
               {organizerEvents.map((event) => (
@@ -69,7 +71,7 @@ export default function ProfileEventsPage() {
               ))}
               {!organizerEvents.length && (
                 <p className="text-sm text-gray-500">
-                  Aucun evenement cree pour le moment.
+                  {t("Aucun evenement cree pour le moment.")}
                 </p>
               )}
             </div>
@@ -77,14 +79,14 @@ export default function ProfileEventsPage() {
         ) : (
           <div className="space-y-4">
             <h3 className="text-sm uppercase text-gray-400 tracking-wide">
-              Evenements favoris
+              {t("Evenements favoris")}
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
               {favoriteEvents.map((event) => (
                 <EventCard key={event._id} event={event} />
               ))}
               {!favoriteEvents.length && (
-                <p className="text-sm text-gray-500">Aucun favori pour le moment.</p>
+                <p className="text-sm text-gray-500">{t("Aucun favori pour le moment.")}</p>
               )}
             </div>
           </div>

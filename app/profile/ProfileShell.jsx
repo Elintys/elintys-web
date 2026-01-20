@@ -8,9 +8,10 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { fetchCurrentUser } from "../store/slices/usersSlice";
 import { ROLES, getUserRoles } from "../store/roleUtils";
+import { useLanguage } from "../i18n/LanguageProvider";
 
 const menuItems = [
-  { href: "/profile/overview", label: "Overview" },
+  { href: "/profile/overview", label: "Apercu" },
   {
     href: "/profile/events",
     label: "Evenements",
@@ -19,15 +20,19 @@ const menuItems = [
   { href: "/profile/tickets", label: "Billets", roles: [ROLES.USER] },
   { href: "/profile/services", label: "Services", roles: [ROLES.PROVIDER] },
   { href: "/profile/venues", label: "Espaces", roles: [ROLES.LANDLORD] },
-  { href: "/profile/roles", label: "Roles" },
   { href: "/profile/notifications", label: "Notifications" },
-  { href: "/profile/settings", label: "Parametres" },
+  { href: "/profile/account", label: "Profil" },
+  { href: "/profile/security", label: "Securite" },
+  { href: "/profile/preferences", label: "Preferences" },
+  { href: "/profile/privacy", label: "Confidentialite" },
+  { href: "/profile/access", label: "Roles et acces" },
 ];
 
 export default function ProfileShell({ children }) {
   const dispatch = useDispatch();
   const pathname = usePathname();
   const currentUser = useSelector((state) => state.users.current);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     dispatch(fetchCurrentUser());
@@ -39,6 +44,18 @@ export default function ProfileShell({ children }) {
     .map((part) => part[0])
     .join("")
     .toUpperCase();
+  const locale = currentUser?.locale || (language === "en" ? "en-CA" : "fr-CA");
+  const rawStatus = currentUser?.status || "PENDING";
+  const statusValue = currentUser?.deleted_at ? "DELETED" : rawStatus;
+  const statusStyles = {
+    ACTIVE: "bg-green-100 text-green-700",
+    PENDING: "bg-gray-100 text-gray-600",
+    SUSPENDED: "bg-red-100 text-red-700",
+    DELETED: "bg-zinc-200 text-zinc-600",
+  };
+  const lastLogin = currentUser?.last_login_at
+    ? new Date(currentUser.last_login_at).toLocaleString(locale)
+    : null;
 
   const breadcrumbItems =
     pathname?.split("?")[0].split("#")[0].split("/").filter(Boolean) || [];
@@ -58,7 +75,7 @@ export default function ProfileShell({ children }) {
             {currentUser?.photo_url ? (
               <img
                 src={currentUser.photo_url}
-                alt="Avatar"
+                alt={t("Avatar")}
                 className="w-16 h-16 rounded-full object-cover"
               />
             ) : (
@@ -68,12 +85,26 @@ export default function ProfileShell({ children }) {
             )}
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                {currentUser?.display_name || "Utilisateur"}
+                {currentUser?.display_name || t("Utilisateur")}
               </h1>
               <p className="text-sm text-gray-500">
-                {currentUser?.email || "Compte Elyntis"}
+                {currentUser?.email || t("Compte Elyntis")}
               </p>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    statusStyles[statusValue] || "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {t(statusValue)}
+                </span>
+                {lastLogin && (
+                  <span className="text-xs text-gray-500">
+                    {t("Derniere connexion")}: {lastLogin}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2 mt-3">
                 {roles.map((role) => (
                   <span
                     key={role}
@@ -83,25 +114,20 @@ export default function ProfileShell({ children }) {
                   </span>
                 ))}
               </div>
-              {currentUser?.status && (
-                <p className="text-xs text-gray-400 mt-2">
-                  Compte {currentUser?.status.toLowerCase()}
-                </p>
-              )}
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/profile/settings"
+              href="/profile/account"
               className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition"
             >
-              Modifier le profil
+              {t("Modifier le profil")}
             </Link>
             <Link
-              href="/profile/roles"
+              href="/profile/access"
               className="px-4 py-2 rounded-full bg-yellow-400 text-gray-900 text-sm hover:bg-yellow-300 transition"
             >
-              Gerer mes roles
+              {t("Roles et acces")}
             </Link>
             {/* <Link
               href="/profile/settings"
@@ -112,19 +138,19 @@ export default function ProfileShell({ children }) {
           </div>
         </div>
 
-        <nav className="mb-6 text-sm text-gray-500" aria-label="Fil d'ariane">
+        <nav className="mb-6 text-sm text-gray-500" aria-label={t("Fil d'ariane")}>
           <div className="flex flex-wrap items-center gap-2">
             <Link href="/profile" className="hover:text-gray-700 transition">
-              Profil
+              {t("Profil")}
             </Link>
             {breadcrumbLinks.map((item, index) => (
               <span key={item.href} className="flex items-center gap-2">
                 <span className="text-gray-300">/</span>
                 {index === breadcrumbLinks.length - 1 ? (
-                  <span className="text-gray-700 font-semibold">{item.label}</span>
+                  <span className="text-gray-700 font-semibold">{t(item.label)}</span>
                 ) : (
                   <Link href={item.href} className="hover:text-gray-700 transition">
-                    {item.label}
+                    {t(item.label)}
                   </Link>
                 )}
               </span>

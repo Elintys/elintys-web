@@ -12,6 +12,7 @@ import { getFavorites } from "../../components/lib/favorites";
 import EventCard from "../../components/EventCard";
 import { ROLES, hasRole, getUserId } from "../../store/roleUtils";
 import { isTicketVisibleForUser } from "../../store/ticketUtils";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function ProfileOverviewPage() {
   const dispatch = useDispatch();
@@ -22,6 +23,8 @@ export default function ProfileOverviewPage() {
   const venues = useSelector((state) => state.venues.list);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const favoritesRef = useRef(null);
+  const { language, t } = useLanguage();
+  const locale = language === "en" ? "en-US" : "fr-FR";
 
   useEffect(() => {
     dispatch(fetchEvents());
@@ -70,7 +73,7 @@ export default function ProfileOverviewPage() {
     <div className="space-y-8">
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-5">
-          <h3 className="text-sm text-gray-500">Prochains evenements</h3>
+          <h3 className="text-sm text-gray-500">{t("Prochains evenements")}</h3>
           <p className="text-2xl font-semibold text-gray-900 mt-2">
             {upcomingEvents.length}
           </p>
@@ -78,11 +81,11 @@ export default function ProfileOverviewPage() {
             href="/profile/events"
             className="text-sm text-indigo-600 hover:underline"
           >
-            Voir mes evenements
+            {t("Voir mes evenements")}
           </Link>
         </div>
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-5">
-          <h3 className="text-sm text-gray-500">Billets</h3>
+          <h3 className="text-sm text-gray-500">{t("Billets")}</h3>
           <p className="text-2xl font-semibold text-gray-900 mt-2">
             {visibleTickets.length}
           </p>
@@ -91,7 +94,7 @@ export default function ProfileOverviewPage() {
               href="/profile/tickets"
               className="text-sm text-indigo-600 hover:underline"
             >
-              Acceder a mes billets
+              {t("Acceder a mes billets")}
             </Link>
             {visibleTickets.length > 0 && (
               <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-[10px] text-gray-500">
@@ -101,7 +104,7 @@ export default function ProfileOverviewPage() {
           </div>
         </div>
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-5">
-          <h3 className="text-sm text-gray-500">Notifications recentes</h3>
+          <h3 className="text-sm text-gray-500">{t("Notifications recentes")}</h3>
           <p className="text-2xl font-semibold text-gray-900 mt-2">
             {notifications.length}
           </p>
@@ -109,17 +112,17 @@ export default function ProfileOverviewPage() {
             href="/profile/notifications"
             className="text-sm text-indigo-600 hover:underline"
           >
-            Voir les notifications
+            {t("Voir les notifications")}
           </Link>
         </div>
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-5">
-          <h3 className="text-sm text-gray-500">Actions rapides</h3>
+          <h3 className="text-sm text-gray-500">{t("Actions rapides")}</h3>
           <div className="flex flex-col gap-2 mt-3 text-sm text-gray-600">
             <Link href="/events" className="hover:text-indigo-600">
-              Rechercher un evenement
+              {t("Rechercher un evenement")}
             </Link>
             <Link href="/profile/tickets" className="hover:text-indigo-600">
-              Voir mes billets
+              {t("Voir mes billets")}
             </Link>
           </div>
         </div>
@@ -130,28 +133,28 @@ export default function ProfileOverviewPage() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">
-                Espace organisateur
+                {t("Espace organisateur")}
               </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Suivez vos evenements et publiez de nouvelles experiences.
+                {t("Suivez vos evenements et publiez de nouvelles experiences.")}
               </p>
             </div>
             <Link
               href="/events/new"
               className="px-5 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition"
             >
-              Creer un evenement
+              {t("Creer un evenement")}
             </Link>
           </div>
           <div className="grid gap-4 md:grid-cols-4 mt-6">
             <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-sm text-gray-500">Evenements crees</p>
+              <p className="text-sm text-gray-500">{t("Evenements crees")}</p>
               <p className="text-xl font-semibold text-gray-900 mt-2">
                 {organizerEvents.length}
               </p>
             </div>
             <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-sm text-gray-500">Evenements a venir</p>
+              <p className="text-sm text-gray-500">{t("Evenements a venir")}</p>
               <p className="text-xl font-semibold text-gray-900 mt-2">
                 {
                   organizerEvents.filter(
@@ -162,11 +165,11 @@ export default function ProfileOverviewPage() {
               </p>
             </div>
             <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-sm text-gray-500">Participants aujourd'hui</p>
+              <p className="text-sm text-gray-500">{t("Participants aujourd'hui")}</p>
               <p className="text-xl font-semibold text-gray-900 mt-2">-</p>
             </div>
             <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-sm text-gray-500">Revenus</p>
+              <p className="text-sm text-gray-500">{t("Revenus")}</p>
               <p className="text-xl font-semibold text-gray-900 mt-2">-</p>
             </div>
           </div>
@@ -175,15 +178,15 @@ export default function ProfileOverviewPage() {
 
       {hasRole(currentUser, ROLES.PROVIDER) && (
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Prestataire</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t("Prestataire")}</h3>
           <p className="text-sm text-gray-500 mt-2">
-            Gerer vos services et repondre aux demandes.
+            {t("Gerer vos services et repondre aux demandes.")}
           </p>
           <Link
             href="/profile/services"
             className="mt-4 inline-flex text-sm text-indigo-600 hover:underline"
           >
-            Voir mes services
+            {t("Voir mes services")}
           </Link>
         </div>
       )}
@@ -191,16 +194,16 @@ export default function ProfileOverviewPage() {
       {hasRole(currentUser, ROLES.LANDLORD) && (
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900">
-            Proprietaire d'espaces
+            {t("Proprietaire d'espaces")}
           </h3>
           <p className="text-sm text-gray-500 mt-2">
-            Vos espaces listes : {venues.length}
+            {t("Vos espaces listes")} : {venues.length}
           </p>
           <Link
             href="/profile/venues"
             className="mt-4 inline-flex text-sm text-indigo-600 hover:underline"
           >
-            Voir mes espaces
+            {t("Voir mes espaces")}
           </Link>
         </div>
       )}
@@ -208,7 +211,7 @@ export default function ProfileOverviewPage() {
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900">
-            Prochains evenements
+            {t("Prochains evenements")}
           </h3>
           <div className="mt-4 space-y-3">
             {upcomingEvents.map((event) => (
@@ -219,18 +222,18 @@ export default function ProfileOverviewPage() {
               >
                 <span>{event.title}</span>
                 <span>
-                  {new Date(event.startDate).toLocaleDateString("fr-FR")}
+                  {new Date(event.startDate).toLocaleDateString(locale)}
                 </span>
               </Link>
             ))}
             {!upcomingEvents.length && (
-              <p className="text-sm text-gray-500">Aucun evenement a venir.</p>
+              <p className="text-sm text-gray-500">{t("Aucun evenement a venir.")}</p>
             )}
           </div>
         </div>
         <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900">
-            Notifications recentes
+            {t("Notifications recentes")}
           </h3>
           <div className="mt-4 space-y-3">
             {notifications.slice(0, 3).map((notification) => (
@@ -240,13 +243,13 @@ export default function ProfileOverviewPage() {
               >
                 <p className="text-gray-700">{notification.message}</p>
                 <p className="text-xs text-gray-400">
-                  {notification.type || "Info"}
+                  {notification.type || t("Info")}
                 </p>
               </div>
             ))}
             {!notifications.length && (
               <p className="text-sm text-gray-500">
-                Aucune notification recente.
+                {t("Aucune notification recente.")}
               </p>
             )}
           </div>
@@ -254,20 +257,20 @@ export default function ProfileOverviewPage() {
             href="/profile/notifications"
             className="text-sm text-indigo-600 hover:underline mt-3 inline-flex"
           >
-            Voir toutes les notifications
+            {t("Voir toutes les notifications")}
           </Link>
         </div>
       </div>
       <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold text-gray-900">Favoris</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t("Favoris")}</h3>
         </div>
         <div className="relative mt-4">
           <button
             type="button"
             onClick={() => scrollFavoritesBy(-400)}
             className="absolute left-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 bg-white/90 text-gray-600 shadow-sm hover:bg-white disabled:opacity-40"
-            aria-label="Defiler vers la gauche"
+            aria-label={t("Defiler vers la gauche")}
             disabled={!favoriteEvents.length}
           >
             <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
@@ -286,7 +289,7 @@ export default function ProfileOverviewPage() {
             ))}
             {!favoriteEvents.length && (
               <p className="text-sm text-gray-500">
-                Aucun evenement en favori.
+                {t("Aucun evenement en favori.")}
               </p>
             )}
           </div>
@@ -294,7 +297,7 @@ export default function ProfileOverviewPage() {
             type="button"
             onClick={() => scrollFavoritesBy(400)}
             className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 bg-white/90 text-gray-600 shadow-sm hover:bg-white disabled:opacity-40"
-            aria-label="Defiler vers la droite"
+            aria-label={t("Defiler vers la droite")}
             disabled={!favoriteEvents.length}
           >
             <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />

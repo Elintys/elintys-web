@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../components/lib/firebaseConfig";
 import { registerProfile, setCredentials } from "../store/slices/authSlice";
+import { useLanguage } from "../i18n/LanguageProvider";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -15,8 +16,9 @@ export default function RegisterForm() {
     email: "",
     password: "",
   });
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +26,7 @@ export default function RegisterForm() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setMessage("");
+    setMessage(null);
     setLoading(true);
 
     try {
@@ -46,18 +48,26 @@ export default function RegisterForm() {
 
       if (action.type.endsWith("fulfilled")) {
         dispatch(setCredentials({ user: data?.user, token: data?.token }));
-        setMessage(
-          `✅ Compte créé avec succès ! Bienvenue, ${
-            data?.user?.display_name || data?.user?.email
-          }`
-        );
+        setMessage({
+          type: "success",
+          text: t("Compte cree avec succes"),
+          value: data?.user?.display_name || data?.user?.email,
+        });
         router.push("/");
       } else {
-        setMessage(`❌ ${data?.message || "Erreur lors de la création du compte."}`);
+        setMessage({
+          type: "error",
+          text: t("Erreur"),
+          value: data?.message || t("Erreur lors de la creation du compte."),
+        });
       }
     } catch (error) {
       console.error("Erreur d'inscription :", error);
-      setMessage(`⚠️ ${error instanceof Error ? error.message : String(error)}`);
+      setMessage({
+        type: "warning",
+        text: t("Attention"),
+        value: error instanceof Error ? error.message : String(error),
+      });
     } finally {
       setLoading(false);
     }
@@ -67,16 +77,16 @@ export default function RegisterForm() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="bg-white rounded-2xl shadow border border-gray-100 w-full max-w-md p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Creer un compte
+          {t("Creer un compte")}
         </h2>
         <p className="text-sm text-gray-500 mb-6">
-          Rejoignez la plateforme pour organiser vos evenements.
+          {t("Rejoignez la plateforme pour organiser vos evenements.")}
         </p>
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <input
               name="firstName"
-              placeholder="Prenom"
+              placeholder={t("Prenom")}
               type="text"
               value={formData.firstName}
               onChange={handleChange}
@@ -85,7 +95,7 @@ export default function RegisterForm() {
             />
             <input
               name="lastName"
-              placeholder="Nom"
+              placeholder={t("Nom")}
               type="text"
               value={formData.lastName}
               onChange={handleChange}
@@ -96,7 +106,7 @@ export default function RegisterForm() {
 
           <input
             name="email"
-            placeholder="Adresse email"
+            placeholder={t("Adresse email")}
             type="email"
             value={formData.email}
             onChange={handleChange}
@@ -106,7 +116,7 @@ export default function RegisterForm() {
 
           <input
             name="password"
-            placeholder="Mot de passe"
+            placeholder={t("Mot de passe")}
             type="password"
             value={formData.password}
             onChange={handleChange}
@@ -123,20 +133,21 @@ export default function RegisterForm() {
                 : "bg-indigo-600 hover:bg-indigo-700"
             }`}
           >
-            {loading ? "Creation du compte..." : "S'inscrire"}
+            {loading ? t("Creation du compte...") : t("S'inscrire")}
           </button>
 
           {message && (
             <p
               className={`text-center text-sm ${
-                message.startsWith("✅")
+                message.type === "success"
                   ? "text-green-600"
-                  : message.startsWith("⚠️")
+                  : message.type === "warning"
                   ? "text-yellow-600"
                   : "text-red-600"
               }`}
             >
-              {message}
+              {message.text}
+              {message.value ? `: ${message.value}` : ""}
             </p>
           )}
         </form>
