@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { fetchProviderDetails } from "../../store/slices/providersSlice";
 
 /**
  * @typedef {import("../../types/providers").ProviderDetailsDTO} ProviderDetailsDTO
@@ -351,35 +353,16 @@ const StickyProviderCTA = ({ provider }) => (
 export default function ProviderDetailsPage() {
   const params = useParams();
   const providerId = params?.providerId;
-  const [status, setStatus] = useState("loading");
-  const [error, setError] = useState("");
-  /** @type {[ProviderDetailsDTO | null, Function]} */
-  const [provider, setProvider] = useState(null);
+  const dispatch = useDispatch();
+  const provider = useSelector((state) => state.providers.detail);
+  const status = useSelector((state) => state.providers.detailStatus);
+  const error = useSelector((state) => state.providers.detailError);
 
-  // Fetch provider details exclusively from the BFF endpoint.
-  const fetchProvider = useCallback(async () => {
+  // Fetch provider details via Redux thunk (BFF only).
+  const fetchProvider = useCallback(() => {
     if (!providerId) return;
-    setStatus("loading");
-    setError("");
-
-    try {
-      const response = await fetch(`/bff/providers/${providerId}`);
-      if (response.status === 404) {
-        setStatus("empty");
-        setProvider(null);
-        return;
-      }
-      if (!response.ok) {
-        throw new Error("Impossible de charger le prestataire.");
-      }
-      const data = await response.json();
-      setProvider(data);
-      setStatus("success");
-    } catch (fetchError) {
-      setStatus("error");
-      setError(fetchError.message || "Erreur inattendue.");
-    }
-  }, [providerId]);
+    dispatch(fetchProviderDetails(providerId));
+  }, [dispatch, providerId]);
 
   // Load the provider when the route param changes.
   useEffect(() => {
@@ -388,8 +371,12 @@ export default function ProviderDetailsPage() {
 
   const content = useMemo(() => {
     if (status === "loading") return <LoadingSkeleton />;
-    if (status === "error") return <ErrorState message={error} onRetry={fetchProvider} />;
-    if (status === "empty" || !provider) return <EmptyState />;
+    if (status === "error") {
+      const isNotFound = error?.status === 404;
+      if (isNotFound) return <EmptyState />;
+      return <ErrorState message={error?.message || error} onRetry={fetchProvider} />;
+    }
+    if (!provider) return <EmptyState />;
 
     return (
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">

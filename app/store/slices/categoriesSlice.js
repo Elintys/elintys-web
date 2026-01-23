@@ -29,7 +29,15 @@ const categoriesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCategories.fulfilled, (state, action) => {
-        state.list = action.payload || [];
+        const payload = action.payload;
+        const normalizedList = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : Array.isArray(payload?.categories)
+              ? payload.categories
+              : [];
+        state.list = normalizedList;
       })
       .addCase(createCategory.fulfilled, (state, action) => {
         state.list = [action.payload, ...state.list];

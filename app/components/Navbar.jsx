@@ -119,15 +119,16 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <li><Link href="/login" className={linkClass("/login")}>{t("Se connecter")}</Link></li>
-                <li>
+                <li><Link href="/login" className="inline-flex items-center px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">{t("Se connecter")}</Link></li>
+                {/* <li><Link href="/login" className={linkClass("/login")}>{t("Se connecter")}</Link></li> */}
+                {/* <li>
                   <Link
                     href="/register"
                     className="inline-flex items-center px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition"
                   >
                     {t("S'inscrire")}
                   </Link>
-                </li>
+                </li> */}
               </>
             )}
           </ul>

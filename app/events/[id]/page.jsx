@@ -83,7 +83,7 @@ export default function EventDetailPage() {
     event?.manualVenue?.name ||
     event?.manualVenue?.country ||
     "En ligne";
-  const organizerLabel = event?.organizerName || event?.organizerId || "—";
+  const organizerLabel = event?.organizerName || event?.user.displayName || "—";
   const categoryLabel =
     event?.category?.name || event?.categoryName || event?.category || event?.categoryId;
   const durationLabel = formatDuration(event?.startDate, event?.endDate);

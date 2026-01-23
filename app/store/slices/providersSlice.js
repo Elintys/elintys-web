@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../apiClient";
+import bffClient from "../bffClient";
 
 const normalizeProvidersResponse = (payload, fallbackPage, fallbackLimit) => {
   const data = payload?.data ?? payload ?? {};
@@ -36,8 +37,26 @@ export const fetchProviders = createAsyncThunk(
   async (params = {}, { rejectWithValue }) => {
     try {
       const res = await apiClient.get("/providers", { params });
+      console.log('====================================');
+      console.log("Providers : ", res);
+      console.log('====================================');
       return normalizeProvidersResponse(res.data, params?.page || 1, params?.limit || 12);
     } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
+export const fetchProviderDetails = createAsyncThunk(
+  "providers/fetchProviderDetails",
+  async (providerId, { rejectWithValue }) => {
+    try {
+      const res = await apiClient.get(`/providers/${providerId}`);
+      return res.data;
+    } catch (error) {
+      if (error?.response?.status === 404) {
+        return rejectWithValue({ status: 404, message: "Prestataire introuvable." });
+      }
       return rejectWithValue(error?.response?.data || error.message);
     }
   }
@@ -54,6 +73,9 @@ const providersSlice = createSlice({
       page: 1,
       limit: 12,
     },
+    detail: null,
+    detailStatus: "idle",
+    detailError: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -70,6 +92,19 @@ const providersSlice = createSlice({
       .addCase(fetchProviders.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
+      })
+      .addCase(fetchProviderDetails.pending, (state) => {
+        state.detailStatus = "loading";
+        state.detailError = null;
+      })
+      .addCase(fetchProviderDetails.fulfilled, (state, action) => {
+        state.detailStatus = "succeeded";
+        state.detail = action.payload;
+      })
+      .addCase(fetchProviderDetails.rejected, (state, action) => {
+        state.detailStatus = "failed";
+        state.detailError = action.payload || action.error.message;
+        state.detail = null;
       });
   },
 });

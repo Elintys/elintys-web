@@ -3,6 +3,9 @@ import apiClient from "../apiClient";
 
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
   const res = await apiClient.get("/events/public");
+  console.log('====================================');
+  console.log("Events: ",res);
+  console.log('====================================');
   const items = res.data?.data || res.data || [];
   return Array.isArray(items)
     ? items.map((event) => ({ ...event, _id: event._id || event.id }))
@@ -13,6 +16,7 @@ export const fetchEventsByUser = createAsyncThunk(
   "events/fetchEventsByUser",
   async (userId, { rejectWithValue }) => {
     try {
+     
       const res = await apiClient.get(`/events/user/${userId}`);
       return res.data;
     } catch (error) {
@@ -25,7 +29,10 @@ export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await apiClient.get(`/events/${id}`);
+      const res = await apiClient.get(`/bff/events/${id}`);
+      console.log('====================================');
+      console.log("Selected event: ", res);
+      console.log('====================================');
       return res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data || error.message);

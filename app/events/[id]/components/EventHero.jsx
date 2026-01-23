@@ -10,8 +10,7 @@ const statusLabel = (event) => {
 };
 
 export default function EventHero({ event, formattedDate, locationLabel }) {
-  const coverImage =
-    event.coverImageUrl || event.imageUrl || event.image || "/images/image.png";
+  const coverImage = event.imageUrl || "/images/image.png";
   const badge = statusLabel(event);
 
   return (

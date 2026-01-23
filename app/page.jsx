@@ -40,7 +40,7 @@ export default function HomePage() {
 
   const popularEvents = useMemo(() => events.slice(0, 6), [events]);
   const onlineEvents = useMemo(
-    () => events.filter((event) => event.isOnline || event.isVirtual).slice(0, 6),
+    () => events?.filter((event) => event.isOnline || event.isVirtual).slice(0, 6),
     [events]
   );
   const trendingEvents = useMemo(() => events.slice(6, 12), [events]);
@@ -136,14 +136,14 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-            {categories.slice(0, 6).map((category) => (
+            {categories.slice(0, 6)?.map((category) => (
               <Link
                 key={category._id || category.name}
                 href="/events"
                 className="bg-white rounded-2xl shadow border border-gray-100 p-4 flex flex-col items-center text-center hover:shadow-md transition"
               >
                 <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-indigo-600 font-semibold">
-                  {(category.name || "CAT").slice(0, 2).toUpperCase()}
+                  {(category.name || "CAT").slice(0, 2)?.toUpperCase()}
                 </div>
                 <p className="mt-3 text-sm text-gray-600">{category.name}</p>
               </Link>
