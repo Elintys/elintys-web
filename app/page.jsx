@@ -3,15 +3,18 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import EventCard from "./components/EventCard";
+import LoginPromptModal from "./components/LoginPromptModal";
 import { fetchEvents } from "./store/slices/eventsSlice";
 import { fetchCategories } from "./store/slices/categoriesSlice";
 import { fetchCurrentUser } from "./store/slices/usersSlice";
 import { ROLES, hasRole } from "./store/roleUtils";
 import { useLanguage } from "./i18n/LanguageProvider";
+import { getStoredAuth } from "./components/lib/auth";
 
 const formatMonth = (dateValue, locale) =>
   new Date(dateValue).toLocaleDateString(locale, { month: "short" }).toUpperCase();
@@ -24,11 +27,14 @@ const formatTime = (dateValue, locale) =>
 
 export default function HomePage() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const events = useSelector((state) => state.events.list);
   const categories = useSelector((state) => state.categories.list);
   const currentUser = useSelector((state) => state.users.current);
+  const auth = useSelector((state) => state.auth);
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { language, t } = useLanguage();
   const locale = language === "en" ? "en-US" : "fr-FR";
 
@@ -44,10 +50,26 @@ export default function HomePage() {
     [events]
   );
   const trendingEvents = useMemo(() => events.slice(6, 12), [events]);
+  const storedAuth = typeof window !== "undefined" ? getStoredAuth() : null;
+  const isAuthenticated = Boolean(auth?.token || storedAuth?.token);
+
+  const handleBecomeOrganizer = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    router.push("/profile/access");
+  };
 
   return (
     <main className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
+      <LoginPromptModal
+        open={showLoginModal}
+        onConfirm={() => router.push("/login")}
+        title="Connexion requise"
+        message="Vous devez d'abord vous connecter pour continuer. Redirection vers la page de connexion."
+      />
 
       <section className="relative overflow-hidden">
         <div
@@ -112,12 +134,13 @@ export default function HomePage() {
                     {t("Creer un evenement")}
                   </Link>
                 ) : (
-                  <Link
-                    href="/profile"
+                  <button
+                    type="button"
+                    onClick={handleBecomeOrganizer}
                     className="px-6 py-3 rounded-xl bg-yellow-400 text-gray-900 font-semibold text-sm hover:bg-yellow-300 transition text-center"
                   >
                     {t("Devenir organisateur")}
-                  </Link>
+                  </button>
                 )}
               </div>
             </div>
@@ -286,12 +309,13 @@ export default function HomePage() {
               {t("Creer un evenement")}
             </Link>
           ) : (
-            <Link
-              href="/profile"
+            <button
+              type="button"
+              onClick={handleBecomeOrganizer}
               className="px-6 py-3 rounded-full bg-yellow-400 text-gray-900 font-semibold hover:bg-yellow-300 transition"
             >
               {t("Devenir organisateur")}
-            </Link>
+            </button>
           )}
         </div>
       </section>

@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import EventCard from "../components/EventCard";
+import LoginPromptModal from "../components/LoginPromptModal";
+import { getStoredAuth } from "../components/lib/auth";
 import { getFavorites, savePreferences } from "../components/lib/favorites";
 import { fetchEvents } from "../store/slices/eventsSlice";
 import { fetchCategories } from "../store/slices/categoriesSlice";
@@ -15,15 +18,18 @@ import { useLanguage } from "../i18n/LanguageProvider";
 
 export default function EventsPage() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const events = useSelector((state) => state.events.list);
   const categories = useSelector((state) => state.categories.list);
   const currentUser = useSelector((state) => state.users.current);
+  const auth = useSelector((state) => state.auth);
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { language, t } = useLanguage();
   const locale = language === "en" ? "en-US" : "fr-FR";
 
@@ -33,6 +39,17 @@ export default function EventsPage() {
     // dispatch(fetchCurrentUser());
     setFavorites(getFavorites());
   }, []);
+
+  const storedAuth = typeof window !== "undefined" ? getStoredAuth() : null;
+  const isAuthenticated = Boolean(auth?.token || storedAuth?.token);
+
+  const handleBecomeOrganizer = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    router.push("/profile/access");
+  };
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
@@ -63,6 +80,12 @@ export default function EventsPage() {
   return (
     <main className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
+      <LoginPromptModal
+        open={showLoginModal}
+        onConfirm={() => router.push("/login")}
+        title="Connexion requise"
+        message="Vous devez d'abord vous connecter pour continuer. Redirection vers la page de connexion."
+      />
       <section className="flex-1 container mx-auto px-4 py-10">
         <div className="flex items-center gap-3 text-gray-500 text-sm mb-6">
           <Link href="/" className="inline-flex items-center gap-2 hover:text-indigo-600">
@@ -112,12 +135,13 @@ export default function EventsPage() {
                 {t("Creer un evenement")}
               </Link>
             ) : (
-              <Link
-                href="/profile"
+              <button
+                type="button"
+                onClick={handleBecomeOrganizer}
                 className="px-4 py-2 bg-yellow-400 text-gray-900 rounded-full hover:bg-yellow-300 transition"
               >
                 {t("Devenir organisateur")}
-              </Link>
+              </button>
             )}
           </div>
         </div>

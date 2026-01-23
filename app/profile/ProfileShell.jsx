@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { fetchCurrentUser } from "../store/slices/usersSlice";
 import { ROLES, getUserRoles } from "../store/roleUtils";
 import { useLanguage } from "../i18n/LanguageProvider";
+import { getStoredAuth } from "../components/lib/auth";
 
 const menuItems = [
   { href: "/profile/overview", label: "Apercu" },
@@ -31,12 +32,26 @@ const menuItems = [
 export default function ProfileShell({ children }) {
   const dispatch = useDispatch();
   const pathname = usePathname();
+  const router = useRouter();
   const currentUser = useSelector((state) => state.users.current);
+  const auth = useSelector((state) => state.auth);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const { t, language } = useLanguage();
 
   useEffect(() => {
+    const stored = getStoredAuth();
+    const token = auth?.token || stored?.token;
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
     dispatch(fetchCurrentUser());
-  }, [dispatch]);
+    setIsAuthChecked(true);
+  }, [auth?.token, dispatch, router]);
+
+  if (!isAuthChecked) {
+    return null;
+  }
 
   const roles = getUserRoles(currentUser);
   const initials = [currentUser?.display_name, currentUser?.email]

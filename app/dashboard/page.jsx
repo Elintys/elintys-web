@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import LoginPromptModal from "../components/LoginPromptModal";
+import { getStoredAuth } from "../components/lib/auth";
 import { fetchCurrentUser } from "../store/slices/usersSlice";
 import { ROLES, hasRole } from "../store/roleUtils";
+import { useLanguage } from "../i18n/LanguageProvider";
 
 const sections = [
   {
@@ -59,11 +63,26 @@ const sections = [
 
 export default function DashboardPage() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const currentUser = useSelector((state) => state.users.current);
+  const auth = useSelector((state) => state.auth);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
+
+  const storedAuth = typeof window !== "undefined" ? getStoredAuth() : null;
+  const isAuthenticated = Boolean(auth?.token || storedAuth?.token);
+
+  const handleBecomeOrganizer = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    router.push("/profile/access");
+  };
 
   const visibleSections = sections.filter((section) => {
     if (section.title === "Organisateurs") {
@@ -81,6 +100,12 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
+      <LoginPromptModal
+        open={showLoginModal}
+        onConfirm={() => router.push("/login")}
+        title="Connexion requise"
+        message="Vous devez d'abord vous connecter pour continuer. Redirection vers la page de connexion."
+      />
       <section className="flex-1 container mx-auto px-4 py-10 space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
@@ -92,12 +117,13 @@ export default function DashboardPage() {
             <p className="text-sm text-gray-500 mt-2">
               Activez votre role pour creer et gerer vos evenements.
             </p>
-            <Link
-              href="/profile"
+            <button
+              type="button"
+              onClick={handleBecomeOrganizer}
               className="mt-4 inline-flex items-center justify-center px-5 py-3 rounded-full bg-yellow-400 text-gray-900 font-semibold hover:bg-yellow-300 transition"
             >
-              Demander le role
-            </Link>
+              {t("Demander le role")}
+            </button>
           </div>
         )}
         <div className="grid md:grid-cols-3 gap-6">

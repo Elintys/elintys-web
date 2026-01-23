@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 import { getStoredAuth } from "./lib/auth";
 import { clearCredentials, setCredentials } from "../store/slices/authSlice";
+import { ROLES, hasRole } from "../store/roleUtils";
 import Breadcrumbs from "./Breadcrumbs";
 import { useLanguage } from "../i18n/LanguageProvider";
 
@@ -47,6 +48,9 @@ export default function Navbar() {
         ? "text-indigo-700 font-semibold"
         : "text-gray-600 hover:text-indigo-600"
     }`;
+  const dashboardHref = hasRole(auth?.user, ROLES.ADMIN) || hasRole(auth?.user, ROLES.SUPER_ADMIN)
+    ? "/admin"
+    : "/dashboard";
 
   return (
     <div>
@@ -82,7 +86,7 @@ export default function Navbar() {
             <li><Link href="/events" className={linkClass("/events")}>{t("Evenements")}</Link></li>
             <li><Link href="/providers" className={linkClass("/providers")}>{t("Prestataires")}</Link></li>
             <li><Link href="/venues" className={linkClass("/venues")}>{t("Lieux")}</Link></li>
-            <li><Link href="/dashboard" className={linkClass("/dashboard")}>{t("Dashboard")}</Link></li>
+            {/* <li><Link href={dashboardHref} className={linkClass(dashboardHref)}>{t("Dashboard")}</Link></li> */}
             <li><Link href="/about" className={linkClass("/about")}>{t("A propos")}</Link></li>
             <li><Link href="/contact" className={linkClass("/contact")}>{t("Contact")}</Link></li>
             {auth?.token ? (

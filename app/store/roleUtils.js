@@ -5,6 +5,7 @@ export const ROLES = {
   LANDLORD: "LANDLORD",
   STAFF: "STAFF",
   ADMIN: "ADMIN",
+  SUPER_ADMIN: "SUPER_ADMIN",
 };
 
 export const getUserRoles = (user) => {
