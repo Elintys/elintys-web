@@ -3,11 +3,11 @@
 import { useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../../../components/Navbar";
-import Footer from "../../../components/Footer";
+import Navbar from "../../../components/layout/Navbar";
+import Footer from "../../../components/layout/Footer";
 import { deleteEvent, fetchEventById } from "../../../store/slices/eventsSlice";
 import { fetchCurrentUser } from "../../../store/slices/usersSlice";
-import RoleGuard from "../../../components/RoleGuard";
+import RoleGuard from "../../../components/guards/RoleGuard";
 import { ROLES, hasRole, getUserId } from "../../../store/roleUtils";
 import CreateEventWizard from "../../new/CreateEventWizard";
 import { useLanguage } from "../../../i18n/LanguageProvider";

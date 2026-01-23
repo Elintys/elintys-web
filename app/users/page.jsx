@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 import { fetchUsers } from "../store/slices/usersSlice";
 import { getUserRoles } from "../store/roleUtils";
 

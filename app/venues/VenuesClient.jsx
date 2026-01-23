@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 import FiltersPanel from "./components/FiltersPanel";
 import VenueCard from "./components/VenueCard";
 import { buildVenueQuery } from "./lib/venues";
@@ -315,11 +315,15 @@ const VenueResults = ({ status, error, venues, viewMode, t }) => {
   }
 
   if (status === "failed") {
+    const errorMessage =
+      typeof error === "string"
+        ? error
+        : error?.message || t("venues.results.errorDescription");
     return (
       <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-center">
         <p className="text-sm text-red-600">{t("venues.results.errorTitle")}</p>
         <p className="mt-2 text-xs text-red-500">
-          {error || t("venues.results.errorDescription")}
+          {errorMessage}
         </p>
       </div>
     );

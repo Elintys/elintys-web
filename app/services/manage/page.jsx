@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import RoleGuard from "../../components/RoleGuard";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
+import RoleGuard from "../../components/guards/RoleGuard";
 import { ROLES } from "../../store/roleUtils";
 
 const STORAGE_KEY = "elyntisServices";

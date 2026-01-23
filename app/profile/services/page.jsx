@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import RoleGuard from "../../components/RoleGuard";
+import RoleGuard from "../../components/guards/RoleGuard";
 import { ROLES } from "../../store/roleUtils";
 
 export default function ProfileServicesPage() {

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../components/lib/firebaseConfig";
+import { auth } from "../lib/firebaseConfig";
 import { registerProfile, setCredentials } from "../store/slices/authSlice";
 import { useLanguage } from "../i18n/LanguageProvider";
 

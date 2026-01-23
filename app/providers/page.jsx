@@ -3,9 +3,9 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/layout/Navbar";
 import { fetchProviders } from "../store/slices/providersSlice";
-import Footer from "../components/Footer";
+import Footer from "../components/layout/Footer";
 
 const POPULARITY_THRESHOLD = 50;
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartOutlineIcon } from "@heroicons/react/24/outline";
-import { isFavorite, toggleFavorite } from "../../components/lib/favorites";
+import { isFavorite, toggleFavorite } from "../../lib/favorites";
 import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function VenueFavoriteButton({ venueId }) {

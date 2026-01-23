@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isFavorite, toggleFavorite } from "../../components/lib/favorites";
+import { isFavorite, toggleFavorite } from "../../lib/favorites";
 import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function FavoriteButton({ eventId }) {

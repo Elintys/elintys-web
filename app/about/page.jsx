@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+import Navbar from "../components/layout/Navbar";
 import T from "../i18n/T";
 
 export default function AboutPage() {

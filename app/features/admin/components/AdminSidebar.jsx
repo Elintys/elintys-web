@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useLanguage } from "../../i18n/LanguageProvider";
+import { useLanguage } from "../../../i18n/LanguageProvider";
 
 const navItems = [
   { href: "/admin", label: "Vue d'ensemble" },

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 import { recoverPassword } from "../store/slices/authSlice";
 import { useLanguage } from "../i18n/LanguageProvider";
 

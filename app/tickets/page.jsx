@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { getStoredAuth } from "../components/lib/auth";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import { getStoredAuth } from "../lib/auth";
 import { createTicket, fetchTickets, useTicket } from "../store/slices/ticketsSlice";
 import { selectAuthUser } from "../store/authSelectors";
 import { isTicketVisibleForUser } from "../store/ticketUtils";

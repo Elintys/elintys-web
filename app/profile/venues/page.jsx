@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { fetchMyVenues } from "../../store/slices/venuesSlice";
-import RoleGuard from "../../components/RoleGuard";
+import RoleGuard from "../../components/guards/RoleGuard";
 import { ROLES } from "../../store/roleUtils";
 
 export default function ProfileVenuesPage() {

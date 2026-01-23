@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import EventCard from "../components/EventCard";
-import { getFavorites } from "../components/lib/favorites";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import EventCard from "../components/ui/EventCard";
+import { getFavorites } from "../lib/favorites";
 import { fetchEvents } from "../store/slices/eventsSlice";
 import { useLanguage } from "../i18n/LanguageProvider";
 

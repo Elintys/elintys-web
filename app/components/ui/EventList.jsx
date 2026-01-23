@@ -1,10 +1,10 @@
-// components/EventList.jsx
+// components/ui/EventList.jsx
 "use client";
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EventCard from "./EventCard";
-import { fetchEvents } from "../store/slices/eventsSlice";
+import { fetchEvents } from "../../store/slices/eventsSlice";
 
 export default function EventList() {
   const dispatch = useDispatch();

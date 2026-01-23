@@ -2,9 +2,9 @@
 
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import { useLanguage } from "../../i18n/LanguageProvider";
-import { clearCredentials } from "../../store/slices/authSlice";
-import { ROLES, hasRole } from "../../store/roleUtils";
+import { useLanguage } from "../../../i18n/LanguageProvider";
+import { clearCredentials } from "../../../store/slices/authSlice";
+import { ROLES, hasRole } from "../../../store/roleUtils";
 
 export default function AdminHeader() {
   const { t } = useLanguage();

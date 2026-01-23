@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCurrentUser } from "../store/slices/usersSlice";
-import { ROLES, hasRole } from "../store/roleUtils";
-import { getStoredAuth } from "../components/lib/auth";
+import { fetchCurrentUser } from "../../store/slices/usersSlice";
+import { ROLES, hasRole } from "../../store/roleUtils";
+import { getStoredAuth } from "../../lib/auth";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminHeader from "./components/AdminHeader";
 

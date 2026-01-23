@@ -4,9 +4,9 @@ import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents, fetchEventsByUser } from "../../store/slices/eventsSlice";
-import { getFavorites } from "../../components/lib/favorites";
-import EventCard from "../../components/EventCard";
-import RoleGuard from "../../components/RoleGuard";
+import { getFavorites } from "../../lib/favorites";
+import EventCard from "../../components/ui/EventCard";
+import RoleGuard from "../../components/guards/RoleGuard";
 import { ROLES, hasRole, getUserId } from "../../store/roleUtils";
 import { useLanguage } from "../../i18n/LanguageProvider";
 

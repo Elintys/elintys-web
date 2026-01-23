@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../apiClient";
-import { clearStoredAuth, setStoredAuth } from "../../components/lib/auth";
+import { clearStoredAuth, setStoredAuth } from "../../lib/auth";
 
 export const loginProfile = createAsyncThunk(
   "auth/loginProfile",

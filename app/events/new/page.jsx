@@ -1,9 +1,9 @@
 "use client";
 
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import RoleGuard from "../../components/RoleGuard";
+import RoleGuard from "../../components/guards/RoleGuard";
 import { ROLES } from "../../store/roleUtils";
 import CreateEventWizard from "./CreateEventWizard";
 

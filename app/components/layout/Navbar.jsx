@@ -1,15 +1,15 @@
-// components/Navbar.jsx
+// components/layout/Navbar.jsx
 "use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
-import { getStoredAuth } from "./lib/auth";
-import { clearCredentials, setCredentials } from "../store/slices/authSlice";
-import { ROLES, hasRole } from "../store/roleUtils";
+import { getStoredAuth } from "../../lib/auth";
+import { clearCredentials, setCredentials } from "../../store/slices/authSlice";
+import { ROLES, hasRole } from "../../store/roleUtils";
 import Breadcrumbs from "./Breadcrumbs";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function Navbar() {
   const router = useRouter();

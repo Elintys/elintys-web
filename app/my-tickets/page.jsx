@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 import { fetchTickets } from "../store/slices/ticketsSlice";
 import { selectAuthUser } from "../store/authSelectors";
 import { isTicketVisibleForUser } from "../store/ticketUtils";

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { showToast } from "../components/Toast";
+import { showToast } from "../components/ui/Toast";
 
 const rawBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api")
   .replace(/\/$/, ""); // Remove trailing slash if present
@@ -32,7 +32,7 @@ apiClient.interceptors.response.use(
       isHandlingSessionExpiry = true;
       try {
         const [{ clearStoredAuth }, { store }, { clearCredentials }] = await Promise.all([
-          import("../components/lib/auth"),
+          import("../lib/auth"),
           import("./store"),
           import("./slices/authSlice"),
         ]);

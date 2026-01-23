@@ -1,8 +1,8 @@
-// components/EventCard.jsx
+// components/ui/EventCard.jsx
 "use client";
 
 import Link from "next/link";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export default function EventCard({ event }) {
   const { language, t } = useLanguage();

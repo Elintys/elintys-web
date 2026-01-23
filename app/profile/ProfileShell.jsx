@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 import { fetchCurrentUser } from "../store/slices/usersSlice";
 import { ROLES, getUserRoles } from "../store/roleUtils";
 import { useLanguage } from "../i18n/LanguageProvider";
-import { getStoredAuth } from "../components/lib/auth";
+import { getStoredAuth } from "../lib/auth";
 
 const menuItems = [
   { href: "/profile/overview", label: "Apercu" },

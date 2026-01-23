@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useDispatch } from "react-redux";
-import Navbar from "../../../components/Navbar";
-import Footer from "../../../components/Footer";
-import RoleGuard from "../../../components/RoleGuard";
+import Navbar from "../../../components/layout/Navbar";
+import Footer from "../../../components/layout/Footer";
+import RoleGuard from "../../../components/guards/RoleGuard";
 import { fetchCurrentUser } from "../../../store/slices/usersSlice";
 import { ROLES } from "../../../store/roleUtils";
 

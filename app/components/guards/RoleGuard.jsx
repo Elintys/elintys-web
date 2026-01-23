@@ -1,9 +1,9 @@
 "use client";
 
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../store/authSelectors";
-import { hasRole } from "../store/roleUtils";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { selectCurrentUser } from "../../store/authSelectors";
+import { hasRole } from "../../store/roleUtils";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import Link from "next/link";
 
 // Simple guard: shows children only when the user has one of the required roles.

@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTickets } from "../../store/slices/ticketsSlice";
-import RoleGuard from "../../components/RoleGuard";
+import RoleGuard from "../../components/guards/RoleGuard";
 import { ROLES } from "../../store/roleUtils";
 import { selectCurrentUser } from "../../store/authSelectors";
 import { isTicketVisibleForUser } from "../../store/ticketUtils";

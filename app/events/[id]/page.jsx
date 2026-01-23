@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/layout/Navbar";
 import { fetchEventById } from "../../store/slices/eventsSlice";
 import { getUserId } from "../../store/roleUtils";
 import EventHero from "./components/EventHero";
