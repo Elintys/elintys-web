@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "../../../components/layout/navbar";
 import useEventDetail from "../hooks/use-event-detail";
 import EventHero from "../components/detail/event-hero";
@@ -11,6 +12,7 @@ import EventProviders from "../components/detail/event-providers";
 import EventTickets from "../components/detail/event-tickets";
 import EventOrganizerActions from "../components/detail/event-organizer-actions";
 import EventMap from "../../../components/maps/EventMap";
+import { geocodeAddress } from "../../../../utils/geocoding/nominatim";
 
 export default function EventDetailPage() {
   const {
@@ -27,8 +29,45 @@ export default function EventDetailPage() {
     tickets,
   } = useEventDetail();
 
-  const hasEventCoordinates =
-    Number.isFinite(Number(event?.latitude)) && Number.isFinite(Number(event?.longitude));
+  const manualLatitude = Number(event?.latitude);
+  const manualLongitude = Number(event?.longitude);
+  const hasManualCoordinates =
+    Number.isFinite(manualLatitude) && Number.isFinite(manualLongitude);
+  const [geocodeResult, setGeocodeResult] = useState(undefined);
+  const addressFromEvent = useMemo(
+    () => event?.address ?? event?.manualVenue?.address ?? "",
+    [event?.address, event?.manualVenue?.address],
+  );
+  const sanitizedAddress = addressFromEvent.trim();
+  const addressForGeocoding = hasManualCoordinates || !sanitizedAddress ? null : sanitizedAddress;
+  const resolvedCoordinates = hasManualCoordinates
+    ? { lat: manualLatitude, lng: manualLongitude }
+    : geocodeResult;
+  const shouldShowUnavailableNotice = !!addressForGeocoding && geocodeResult === null;
+
+  useEffect(() => {
+    if (!addressForGeocoding) {
+      setGeocodeResult(undefined);
+      return;
+    }
+
+    let active = true;
+    setGeocodeResult(undefined);
+
+    async function fetchCoordinates() {
+      const coordinates = await geocodeAddress(addressForGeocoding);
+      if (!active) {
+        return;
+      }
+      setGeocodeResult(coordinates);
+    }
+
+    fetchCoordinates();
+
+    return () => {
+      active = false;
+    };
+  }, [addressForGeocoding]);
 
   if (loading) {
     return (
@@ -75,10 +114,18 @@ export default function EventDetailPage() {
           <div className="space-y-6">
             <EventDescription description={event.description} />
             <EventVenue venue={event.manualVenue} />
-            {hasEventCoordinates && (
+            {(resolvedCoordinates || shouldShowUnavailableNotice) && (
               <section className="bg-white rounded-2xl border border-gray-100 shadow p-6 space-y-3">
                 <h2 className="text-xl font-semibold text-gray-900">Localisation</h2>
-                <EventMap latitude={event.latitude} longitude={event.longitude} height={280} />
+                {resolvedCoordinates ? (
+                  <EventMap
+                    latitude={resolvedCoordinates.lat}
+                    longitude={resolvedCoordinates.lng}
+                    height={280}
+                  />
+                ) : (
+                  <p className="text-sm text-gray-500">Localisation indisponible</p>
+                )}
               </section>
             )}
             <EventProviders providers={event.manualProviders} />
