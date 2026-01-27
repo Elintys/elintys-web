@@ -10,6 +10,7 @@ import EventVenue from "../components/detail/event-venue";
 import EventProviders from "../components/detail/event-providers";
 import EventTickets from "../components/detail/event-tickets";
 import EventOrganizerActions from "../components/detail/event-organizer-actions";
+import EventMap from "../../../components/maps/EventMap";
 
 export default function EventDetailPage() {
   const {
@@ -25,6 +26,9 @@ export default function EventDetailPage() {
     isOrganizer,
     tickets,
   } = useEventDetail();
+
+  const hasEventCoordinates =
+    Number.isFinite(Number(event?.latitude)) && Number.isFinite(Number(event?.longitude));
 
   if (loading) {
     return (
@@ -71,6 +75,12 @@ export default function EventDetailPage() {
           <div className="space-y-6">
             <EventDescription description={event.description} />
             <EventVenue venue={event.manualVenue} />
+            {hasEventCoordinates && (
+              <section className="bg-white rounded-2xl border border-gray-100 shadow p-6 space-y-3">
+                <h2 className="text-xl font-semibold text-gray-900">Localisation</h2>
+                <EventMap latitude={event.latitude} longitude={event.longitude} height={280} />
+              </section>
+            )}
             <EventProviders providers={event.manualProviders} />
             <EventTickets tickets={tickets} />
           </div>
