@@ -5,15 +5,15 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
-import EventCard from "./components/ui/EventCard";
-import LoginPromptModal from "./components/ui/LoginPromptModal";
+import Navbar from "./components/layout/navbar";
+import Footer from "./components/layout/footer";
+import EventCard from "./components/ui/event-card";
+import LoginPromptModal from "./components/ui/login-prompt-modal";
 import { fetchEvents } from "./store/slices/eventsSlice";
 import { fetchCategories } from "./store/slices/categoriesSlice";
 import { fetchCurrentUser } from "./store/slices/usersSlice";
 import { ROLES, hasRole } from "./store/roleUtils";
-import { useLanguage } from "./i18n/LanguageProvider";
+import { useLanguage } from "./i18n/language-provider";
 import { getStoredAuth } from "./lib/auth";
 
 const formatMonth = (dateValue, locale) =>

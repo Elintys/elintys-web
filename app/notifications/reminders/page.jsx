@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import Navbar from "../../components/layout/Navbar";
-import Footer from "../../components/layout/Footer";
+import Navbar from "../../components/layout/navbar";
+import Footer from "../../components/layout/footer";
 import { getStoredAuth } from "../../lib/auth";
 import { createNotification } from "../../store/slices/notificationsSlice";
-import { useLanguage } from "../../i18n/LanguageProvider";
+import { useLanguage } from "../../i18n/language-provider";
 
 export default function NotificationRemindersPage() {
   const dispatch = useDispatch();

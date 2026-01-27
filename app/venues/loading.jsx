@@ -1,7 +1,7 @@
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import Breadcrumbs from "../components/layout/Breadcrumbs";
-import ResultsSkeleton from "./components/ResultsSkeleton";
+import Navbar from "../components/layout/navbar";
+import Footer from "../components/layout/footer";
+import Breadcrumbs from "../components/layout/breadcrumbs";
+import ResultsSkeleton from "../features/venues/components/list/results-skeleton";
 
 export default function Loading() {
   return (

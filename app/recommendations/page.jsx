@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import EventCard from "../components/ui/EventCard";
+import Navbar from "../components/layout/navbar";
+import Footer from "../components/layout/footer";
+import EventCard from "../components/ui/event-card";
 import { getFavorites, getPreferences } from "../lib/favorites";
 import { fetchEvents } from "../store/slices/eventsSlice";
 import { fetchCategories } from "../store/slices/categoriesSlice";

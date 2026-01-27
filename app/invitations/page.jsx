@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
+import Navbar from "../components/layout/navbar";
+import Footer from "../components/layout/footer";
 import { getStoredAuth } from "../lib/auth";
 import {
   createInvitation,

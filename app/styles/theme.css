@@ -18,13 +18,6 @@
   --font-mono: "Fira Code", "SFMono-Regular", monospace;
 }
 
-@theme inline {
-  --color-background: var(--color-background);
-  --color-foreground: var(--color-foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: #1569bd;

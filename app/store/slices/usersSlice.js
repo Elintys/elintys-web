@@ -53,7 +53,7 @@ export const updateUserPreferences = createAsyncThunk(
   "users/updateUserPreferences",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await apiClient.patch("/users/me/preferences", payload);
+      const res = await apiClient.patch("/users/me/profile", payload);
       return res.data?.user || res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data || error.message);
@@ -65,8 +65,8 @@ export const fetchUserRoles = createAsyncThunk(
   "users/fetchUserRoles",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await apiClient.get("/users/me/roles");
-      return res.data;
+      const res = await apiClient.get("/users/me");
+      return res.data?.roles ? { roles: res.data.roles } : res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data || error.message);
     }
@@ -77,8 +77,8 @@ export const fetchUserPermissions = createAsyncThunk(
   "users/fetchUserPermissions",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await apiClient.get("/users/me/permissions");
-      return res.data;
+      const res = await apiClient.get("/users/me");
+      return res.data?.permissions ? { permissions: res.data.permissions } : res.data;
     } catch (error) {
       return rejectWithValue(error?.response?.data || error.message);
     }

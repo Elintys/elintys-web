@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../lib/firebaseConfig";
+import { auth } from "../lib/firebase-config";
 import { registerProfile, setCredentials } from "../store/slices/authSlice";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { useLanguage } from "../i18n/language-provider";
 
 export default function RegisterForm() {
   const router = useRouter();

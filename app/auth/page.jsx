@@ -3,9 +3,9 @@ import { useState } from "react";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { auth } from "../lib/firebaseConfig";
+import { auth } from "../lib/firebase-config";
 import { registerProfile, setCredentials } from "../store/slices/authSlice";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { useLanguage } from "../i18n/language-provider";
 
 export default function AuthTestForm() {
   const router = useRouter();
@@ -28,9 +28,6 @@ export default function AuthTestForm() {
         userCredential = await createUserWithEmailAndPassword(auth, email, password);
       }
 
-      console.log('====================================');
-      console.log("User credential: ",userCredential);
-      console.log('====================================');
       // Récupère le token Firebase
       const token = await userCredential.user.getIdToken();
 

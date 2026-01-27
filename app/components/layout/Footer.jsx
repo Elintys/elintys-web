@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguage } from "../../i18n/LanguageProvider";
+import { useLanguage } from "../../i18n/language-provider";
 
 export default function Footer() {
   const { language, setLanguage, t } = useLanguage();

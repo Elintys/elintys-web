@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import EventCard from "../components/ui/EventCard";
+import Navbar from "../components/layout/navbar";
+import Footer from "../components/layout/footer";
+import EventCard from "../components/ui/event-card";
 import { getFavorites } from "../lib/favorites";
 import { fetchEvents } from "../store/slices/eventsSlice";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { useLanguage } from "../i18n/language-provider";
 
 export default function FavoritesPage() {
   const dispatch = useDispatch();

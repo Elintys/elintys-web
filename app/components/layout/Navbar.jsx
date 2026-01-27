@@ -1,4 +1,4 @@
-// components/layout/Navbar.jsx
+// components/layout/navbar.jsx
 "use client";
 
 import Link from "next/link";
@@ -8,8 +8,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { getStoredAuth } from "../../lib/auth";
 import { clearCredentials, setCredentials } from "../../store/slices/authSlice";
 import { ROLES, hasRole } from "../../store/roleUtils";
-import Breadcrumbs from "./Breadcrumbs";
-import { useLanguage } from "../../i18n/LanguageProvider";
+import Breadcrumbs from "./breadcrumbs";
+import { useLanguage } from "../../i18n/language-provider";
 
 export default function Navbar() {
   const router = useRouter();
@@ -27,7 +27,6 @@ export default function Navbar() {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("Utilisateur connecte:", auth.user);
     if (auth?.user) {
       console.log("Utilisateur connecte:", auth.user);
     }

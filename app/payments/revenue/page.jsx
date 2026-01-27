@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Navbar from "../../components/layout/Navbar";
-import Footer from "../../components/layout/Footer";
+import Navbar from "../../components/layout/navbar";
+import Footer from "../../components/layout/footer";
 
 const STORAGE_KEY = "elyntisPayments";
 

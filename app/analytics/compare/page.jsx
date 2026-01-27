@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "../../components/layout/Navbar";
-import Footer from "../../components/layout/Footer";
+import Navbar from "../../components/layout/navbar";
+import Footer from "../../components/layout/footer";
 
 export default function AnalyticsComparePage() {
   const [eventA, setEventA] = useState("");

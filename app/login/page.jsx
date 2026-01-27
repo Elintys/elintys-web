@@ -6,11 +6,11 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../lib/firebaseConfig";
+import { auth } from "../lib/firebase-config";
 import { loginProfile, setCredentials } from "../store/slices/authSlice";
-import { useLanguage } from "../i18n/LanguageProvider";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
+import { useLanguage } from "../i18n/language-provider";
+import Navbar from "../components/layout/navbar";
+import Footer from "../components/layout/footer";
 
 export default function LoginForm() {
   const router = useRouter();

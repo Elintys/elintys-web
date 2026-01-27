@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import LoginPromptModal from "../components/ui/LoginPromptModal";
+import Navbar from "../components/layout/navbar";
+import Footer from "../components/layout/footer";
+import LoginPromptModal from "../components/ui/login-prompt-modal";
 import { getStoredAuth } from "../lib/auth";
 import { fetchCurrentUser } from "../store/slices/usersSlice";
 import { ROLES, hasRole } from "../store/roleUtils";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { useLanguage } from "../i18n/language-provider";
 
 const sections = [
   {

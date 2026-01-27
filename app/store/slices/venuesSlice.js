@@ -19,8 +19,12 @@ export const fetchMyVenues = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await apiClient.get("/venues/me");
+      log("API My Venues Response:", res.data);
       return res.data;
     } catch (error) {
+      console.log('====================================');
+      console.log("erreur lors de la recuperation des lieux utilisateur: ",error);
+      console.log('====================================');
       return rejectWithValue(error?.response?.data || error.message);
     }
   }

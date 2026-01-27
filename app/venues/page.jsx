@@ -1,5 +1,5 @@
-import VenuesClient from "./VenuesClient";
-import { formatMessage, getMessage, resolveLocale } from "./lib/i18n";
+import VenuesPageContent from "../features/venues/pages/venues-page";
+import { formatMessage, getMessage, resolveLocale } from "../features/venues/utils/venue-i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -22,5 +22,5 @@ export async function generateMetadata({ searchParams }) {
 }
 
 export default function VenuesPage() {
-  return <VenuesClient />;
+  return <VenuesPageContent />;
 }

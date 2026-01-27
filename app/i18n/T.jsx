@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguage } from "./LanguageProvider";
+import { useLanguage } from "./language-provider";
 
 export default function T({ k }) {
   const { t } = useLanguage();

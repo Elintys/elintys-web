@@ -1,4 +1,4 @@
-import AdminModerationPage from "../../features/admin/pages/Moderation";
+import AdminModerationPage from "../../features/admin/pages/moderation-page";
 
 export default function AdminModerationRoute() {
   return <AdminModerationPage />;

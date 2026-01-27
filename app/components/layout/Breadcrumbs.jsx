@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLanguage } from "../../i18n/LanguageProvider";
+import { useLanguage } from "../../i18n/language-provider";
 
 const isIdSegment = (segment) =>
   /^[0-9a-f]{8,}$/i.test(segment) ||
