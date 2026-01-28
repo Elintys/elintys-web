@@ -12,6 +12,7 @@ import EventProviders from "../components/detail/event-providers";
 import EventTickets from "../components/detail/event-tickets";
 import EventOrganizerActions from "../components/detail/event-organizer-actions";
 import EventMap from "../../../components/maps/EventMap";
+import SimilarEventsCarousel from "../../../components/events/SimilarEventsCarousel";
 import { geocodeAddress } from "../../../../utils/geocoding/nominatim";
 
 export default function EventDetailPage() {
@@ -35,7 +36,7 @@ export default function EventDetailPage() {
     Number.isFinite(manualLatitude) && Number.isFinite(manualLongitude);
   const [geocodeResult, setGeocodeResult] = useState(undefined);
   const addressFromEvent = useMemo(
-    () => event?.address ?? event?.manualVenue?.address ?? "",
+    () => event?.manualVenue?.address || "",
     [event?.address, event?.manualVenue?.address],
   );
   const sanitizedAddress = addressFromEvent.trim();
@@ -106,6 +107,7 @@ export default function EventDetailPage() {
           locationLabel={locationLabel}
           categoryLabel={categoryLabel}
           organizer={organizerLabel}
+          resolvedCoordinates={resolvedCoordinates}
         />
 
         <EventActions event={event} hasTickets={tickets.length > 0} />
@@ -113,21 +115,8 @@ export default function EventDetailPage() {
         <div className="grid lg:grid-cols-[2fr,1fr] gap-6">
           <div className="space-y-6">
             <EventDescription description={event.description} />
-            <EventVenue venue={event.manualVenue} />
-            {(resolvedCoordinates || shouldShowUnavailableNotice) && (
-              <section className="bg-white rounded-2xl border border-gray-100 shadow p-6 space-y-3">
-                <h2 className="text-xl font-semibold text-gray-900">Localisation</h2>
-                {resolvedCoordinates ? (
-                  <EventMap
-                    latitude={resolvedCoordinates.lat}
-                    longitude={resolvedCoordinates.lng}
-                    height={280}
-                  />
-                ) : (
-                  <p className="text-sm text-gray-500">Localisation indisponible</p>
-                )}
-              </section>
-            )}
+            <EventVenue venue={event.manualVenue} resolvedCoordinates={resolvedCoordinates} shouldShowUnavailableNotice={shouldShowUnavailableNotice} />
+            
             <EventProviders providers={event.manualProviders} />
             <EventTickets tickets={tickets} />
           </div>
@@ -143,6 +132,7 @@ export default function EventDetailPage() {
             )}
           </aside>
         </div>
+        <SimilarEventsCarousel eventId={eventId} />
       </section>
     </main>
   );

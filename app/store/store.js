@@ -9,6 +9,7 @@ import notificationsReducer from "./slices/notificationsSlice";
 import usersReducer from "./slices/usersSlice";
 import providersReducer from "./slices/providersSlice";
 import eventDraftReducer from "./slices/eventSlice";
+import similarEventsReducer from "./slices/similarEventsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
     notifications: notificationsReducer,
     users: usersReducer,
     providers: providersReducer,
+    similarEvents: similarEventsReducer,
     eventDraft: eventDraftReducer,
   },
 });
